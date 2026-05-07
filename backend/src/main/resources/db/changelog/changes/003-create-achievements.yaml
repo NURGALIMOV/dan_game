@@ -1,0 +1,37 @@
+databaseChangeLog:
+
+  - changeSet:
+      id:     003-create-achievements
+      author: dangame
+      changes:
+        - createTable:
+            tableName: achievements
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable:   false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable:        false
+                    foreignKeyName:  fk_achievements_user
+                    references:      users(id)
+              - column:
+                  name: achievement_key
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name:                 earned_at
+                  type:                 TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        - addUniqueConstraint:
+            tableName:      achievements
+            columnNames:    user_id, achievement_key
+            constraintName: uq_achievements_user_key

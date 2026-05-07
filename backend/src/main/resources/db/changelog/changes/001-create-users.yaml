@@ -1,0 +1,49 @@
+databaseChangeLog:
+
+  - changeSet:
+      id:     001-create-users
+      author: dangame
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable:   false
+              - column:
+                  name: email
+                  type: TEXT
+                  constraints:
+                    nullable: false
+                    unique:   true
+              - column:
+                  name: password_hash
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: agent_name
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: token
+                  type: TEXT
+                  constraints:
+                    unique: true
+              - column:
+                  name:         rank
+                  type:         TEXT
+                  defaultValue: "Стажёр"
+              - column:
+                  name:                cases_solved
+                  type:                INTEGER
+                  defaultValueNumeric: 0
+              - column:
+                  name:                 created_at
+                  type:                 TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP

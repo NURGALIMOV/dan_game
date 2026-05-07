@@ -1,0 +1,17 @@
+### Gradle / Java ###
+**/build/
+**/.gradle/
+**/out/
+*.iml
+.idea/
+
+### Spring Boot dev artifacts ###
+**/data/
+
+### Editor / IDE local config ###
+.claude/
+.vscode/
+
+### Docker / OS ###
+.env
+.DS_Store

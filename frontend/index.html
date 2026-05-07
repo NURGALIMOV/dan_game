@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>АГЕНТСТВО — Закрытые дела</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0c0f;
+  --bg2: #0f1218;
+  --bg3: #161b23;
+  --border: #1e2530;
+  --border2: #2a3444;
+  --accent: #c8a96e;
+  --accent2: #8b6f3a;
+  --red: #c94040;
+  --green: #3d8b5e;
+  --text: #d4cfc8;
+  --text2: #8a8680;
+  --text3: #4a4740;
+  --mono: 'Share Tech Mono', monospace;
+  --serif: 'Courier Prime', monospace;
+  --display: 'Bebas Neue', sans-serif;
+}
+
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--serif); }
+
+/* ─── SCREENS ─────────────────────────────────────────────────── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ─── LANDING ─────────────────────────────────────────────────── */
+#screen-landing {
+  background: var(--bg);
+  justify-content: center; align-items: center;
+  position: relative; overflow: hidden;
+}
+#screen-landing::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(200,169,110,.015) 40px, rgba(200,169,110,.015) 41px),
+              repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(200,169,110,.015) 40px, rgba(200,169,110,.015) 41px);
+}
+.landing-inner {
+  position: relative; z-index: 1;
+  text-align: center; max-width: 640px; padding: 40px 20px;
+}
+.landing-badge {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 4px;
+  color: var(--accent2); margin-bottom: 24px; text-transform: uppercase;
+}
+.landing-title {
+  font-family: var(--display); font-size: clamp(64px, 12vw, 120px);
+  color: var(--accent); line-height: 0.9; letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.landing-sub {
+  font-family: var(--display); font-size: clamp(20px, 4vw, 32px);
+  color: var(--text2); letter-spacing: 6px; margin-bottom: 40px;
+}
+.landing-case {
+  border: 1px solid var(--border2); padding: 24px; margin-bottom: 40px;
+  background: rgba(200,169,110,.04); text-align: left;
+}
+.landing-case-label { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 3px; margin-bottom: 12px; }
+.landing-case-title { font-family: var(--display); font-size: 28px; color: var(--text); letter-spacing: 1px; margin-bottom: 8px; }
+.landing-case-desc { font-family: var(--serif); font-size: 14px; color: var(--text2); line-height: 1.6; }
+.btn-row { display: flex; gap: 16px; justify-content: center; }
+.btn {
+  padding: 14px 32px; font-family: var(--mono); font-size: 13px; letter-spacing: 2px;
+  cursor: pointer; border: none; transition: all .2s; text-transform: uppercase;
+}
+.btn-primary { background: var(--accent); color: var(--bg); }
+.btn-primary:hover { background: #dfc07e; }
+.btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent2); }
+.btn-ghost:hover { border-color: var(--accent); }
+
+/* ─── AUTH ─────────────────────────────────────────────────────── */
+#screen-auth {
+  justify-content: center; align-items: center;
+  background: var(--bg);
+}
+.auth-box {
+  width: 100%; max-width: 400px; padding: 20px;
+}
+.auth-logo { font-family: var(--display); font-size: 48px; color: var(--accent); text-align: center; margin-bottom: 4px; }
+.auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+.auth-tab {
+  flex: 1; padding: 12px; text-align: center; font-family: var(--mono);
+  font-size: 12px; letter-spacing: 2px; cursor: pointer; color: var(--text2);
+  border-bottom: 2px solid transparent; transition: all .2s; background: none; border-top: none; border-left: none; border-right: none;
+}
+.auth-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: var(--accent2); margin-bottom: 8px; text-transform: uppercase; }
+.form-input {
+  width: 100%; padding: 12px 16px; background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text); font-family: var(--serif); font-size: 14px;
+  outline: none; transition: border-color .2s;
+}
+.form-input:focus { border-color: var(--accent2); }
+.auth-error { color: var(--red); font-family: var(--mono); font-size: 12px; margin-bottom: 16px; display: none; }
+.auth-back { text-align: center; margin-top: 20px; }
+.auth-back a { color: var(--text3); font-family: var(--mono); font-size: 11px; cursor: pointer; text-decoration: none; }
+.auth-back a:hover { color: var(--text2); }
+
+/* ─── CABINET ──────────────────────────────────────────────────── */
+#screen-cabinet { background: var(--bg); }
+.cabinet-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--bg2);
+}
+.cabinet-logo { font-family: var(--display); font-size: 28px; color: var(--accent); letter-spacing: 2px; }
+.cabinet-agent { font-family: var(--mono); font-size: 12px; color: var(--text2); text-align: right; }
+.cabinet-agent-name { color: var(--accent); font-size: 14px; display: block; }
+.cabinet-body { display: grid; grid-template-columns: 280px 1fr; flex: 1; min-height: calc(100vh - 57px); }
+.cabinet-sidebar { border-right: 1px solid var(--border); padding: 24px; background: var(--bg2); }
+.sidebar-section { margin-bottom: 32px; }
+.sidebar-label { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: var(--accent2); margin-bottom: 16px; text-transform: uppercase; }
+.rank-badge {
+  background: rgba(200,169,110,.08); border: 1px solid var(--accent2);
+  padding: 16px; margin-bottom: 12px;
+}
+.rank-name { font-family: var(--display); font-size: 24px; color: var(--accent); margin-bottom: 4px; }
+.rank-cases { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+.rank-progress { height: 2px; background: var(--border); margin-top: 12px; }
+.rank-progress-fill { height: 100%; background: var(--accent); transition: width .5s; }
+.achievement-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.achievement {
+  aspect-ratio: 1; background: var(--bg3); border: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 22px; cursor: default; position: relative;
+}
+.achievement.locked { filter: grayscale(1); opacity: .3; }
+.achievement-tip {
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: var(--bg3); border: 1px solid var(--border2); padding: 6px 10px;
+  font-family: var(--mono); font-size: 10px; color: var(--text); white-space: nowrap;
+  pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 10;
+}
+.achievement:hover .achievement-tip { opacity: 1; }
+.leaderboard-list { }
+.leaderboard-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+  font-family: var(--mono); font-size: 11px;
+}
+.leaderboard-item:last-child { border: none; }
+.leaderboard-pos { color: var(--text3); width: 24px; }
+.leaderboard-name { color: var(--text); flex: 1; padding: 0 8px; }
+.leaderboard-rank { color: var(--accent2); font-size: 10px; }
+.cabinet-main { padding: 32px; }
+.cabinet-main h2 { font-family: var(--display); font-size: 32px; color: var(--text); letter-spacing: 2px; margin-bottom: 24px; }
+.cases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.case-card {
+  border: 1px solid var(--border2); padding: 24px; background: var(--bg2);
+  cursor: pointer; transition: border-color .2s;
+}
+.case-card:hover { border-color: var(--accent2); }
+.case-card-num { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 3px; margin-bottom: 12px; }
+.case-card-title { font-family: var(--display); font-size: 24px; color: var(--text); margin-bottom: 8px; }
+.case-card-sub { font-family: var(--serif); font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+.case-card-status { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.status-dot.paid { background: var(--green); }
+.btn-logout { background: none; border: none; color: var(--text3); font-family: var(--mono); font-size: 11px; cursor: pointer; letter-spacing: 1px; }
+.btn-logout:hover { color: var(--red); }
+
+/* ─── GAME ─────────────────────────────────────────────────────── */
+#screen-game { background: var(--bg); flex-direction: column; }
+.game-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2);
+  flex-shrink: 0;
+}
+.game-title { font-family: var(--display); font-size: 20px; color: var(--accent); letter-spacing: 2px; }
+.game-back { background: none; border: none; color: var(--text2); font-family: var(--mono); font-size: 11px; cursor: pointer; letter-spacing: 1px; }
+.game-back:hover { color: var(--accent); }
+.game-body {
+  display: grid;
+  grid-template-columns: 260px 1fr 300px;
+  flex: 1; overflow: hidden;
+}
+
+/* LEFT — docs panel */
+.docs-panel { border-right: 1px solid var(--border); overflow-y: auto; background: var(--bg2); }
+.docs-panel-title { padding: 16px; font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: var(--accent2); border-bottom: 1px solid var(--border); text-transform: uppercase; }
+.docs-category { }
+.docs-cat-label { padding: 10px 16px 4px; font-family: var(--mono); font-size: 9px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; }
+.doc-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; cursor: pointer; transition: background .15s;
+  border-left: 2px solid transparent;
+}
+.doc-item:hover { background: rgba(200,169,110,.05); }
+.doc-item.active { background: rgba(200,169,110,.08); border-left-color: var(--accent); }
+.doc-item.locked { opacity: .4; cursor: default; }
+.doc-icon { font-size: 14px; flex-shrink: 0; }
+.doc-name { font-family: var(--serif); font-size: 12px; color: var(--text); line-height: 1.3; }
+.doc-check { margin-left: auto; color: var(--green); font-size: 12px; flex-shrink: 0; }
+
+/* CENTER — document viewer */
+.doc-viewer {
+  overflow-y: auto; padding: 32px;
+  display: flex; flex-direction: column;
+}
+.doc-viewer-empty {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--text3); font-family: var(--mono); font-size: 12px; letter-spacing: 2px;
+}
+.doc-viewer-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: .3; }
+.doc-content {
+  background: var(--bg2); border: 1px solid var(--border);
+  padding: 32px; max-width: 700px; width: 100%; font-family: var(--serif);
+  font-size: 14px; line-height: 1.8; color: var(--text); white-space: pre-wrap;
+}
+.doc-content-header {
+  border-bottom: 1px solid var(--border); margin-bottom: 24px; padding-bottom: 16px;
+}
+.doc-content-title { font-family: var(--display); font-size: 22px; color: var(--accent); letter-spacing: 1px; margin-bottom: 4px; }
+.doc-content-cat { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 3px; }
+.doc-content-body { color: var(--text); }
+
+/* RIGHT — assistant */
+.assistant-panel {
+  border-left: 1px solid var(--border); overflow-y: auto;
+  display: flex; flex-direction: column; background: var(--bg2);
+}
+.assistant-header {
+  padding: 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.assistant-title { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: var(--accent2); text-transform: uppercase; margin-bottom: 4px; }
+.assistant-name { font-family: var(--display); font-size: 20px; color: var(--text); }
+.chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.chat-msg {
+  padding: 12px 14px; font-family: var(--serif); font-size: 13px; line-height: 1.6;
+}
+.chat-msg.assistant { background: var(--bg3); border-left: 2px solid var(--accent2); color: var(--text); }
+.chat-msg.system { border-left: 2px solid var(--text3); color: var(--text2); font-size: 12px; font-style: italic; }
+.chat-actions { padding: 16px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.chat-actions-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--text3); margin-bottom: 12px; text-transform: uppercase; }
+.action-btn {
+  display: block; width: 100%; text-align: left;
+  padding: 10px 14px; margin-bottom: 8px; background: var(--bg3);
+  border: 1px solid var(--border); color: var(--text);
+  font-family: var(--serif); font-size: 12px; cursor: pointer; transition: all .15s;
+}
+.action-btn:hover { border-color: var(--accent2); background: rgba(200,169,110,.05); }
+.action-btn:last-child { margin-bottom: 0; }
+
+/* ACCUSE section */
+.accuse-section { padding: 16px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.accuse-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--red); margin-bottom: 10px; text-transform: uppercase; }
+.suspect-select {
+  width: 100%; padding: 10px; background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text); font-family: var(--serif); font-size: 13px; margin-bottom: 10px; outline: none;
+}
+.btn-accuse { width: 100%; padding: 12px; background: var(--red); color: #fff; border: none; font-family: var(--mono); font-size: 12px; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; }
+.btn-accuse:hover { background: #d94f4f; }
+
+/* PAYWALL */
+.paywall-overlay {
+  position: fixed; inset: 0; background: rgba(10,12,15,.92);
+  display: none; align-items: center; justify-content: center; z-index: 100;
+}
+.paywall-overlay.show { display: flex; }
+.paywall-box {
+  max-width: 440px; width: 90%; background: var(--bg2);
+  border: 1px solid var(--accent2); padding: 40px;
+  text-align: center;
+}
+.paywall-icon { font-size: 48px; margin-bottom: 20px; }
+.paywall-title { font-family: var(--display); font-size: 32px; color: var(--accent); margin-bottom: 12px; letter-spacing: 2px; }
+.paywall-desc { font-family: var(--serif); font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 28px; }
+.paywall-price { font-family: var(--display); font-size: 48px; color: var(--text); margin-bottom: 28px; }
+.paywall-price span { font-size: 20px; color: var(--text2); }
+.btn-pay { width: 100%; padding: 16px; background: var(--accent); color: var(--bg); border: none; font-family: var(--mono); font-size: 14px; letter-spacing: 3px; cursor: pointer; text-transform: uppercase; margin-bottom: 12px; }
+.btn-pay:hover { background: #dfc07e; }
+.paywall-close { background: none; border: none; color: var(--text3); font-family: var(--mono); font-size: 11px; cursor: pointer; }
+
+/* RESULT */
+.result-overlay {
+  position: fixed; inset: 0; background: rgba(10,12,15,.95);
+  display: none; align-items: center; justify-content: center; z-index: 100;
+}
+.result-overlay.show { display: flex; }
+.result-box {
+  max-width: 480px; width: 90%; background: var(--bg2); border: 1px solid var(--border2);
+  padding: 40px; text-align: center;
+}
+.result-box.correct { border-color: var(--green); }
+.result-box.wrong { border-color: var(--red); }
+.result-icon { font-size: 64px; margin-bottom: 20px; }
+.result-title { font-family: var(--display); font-size: 36px; margin-bottom: 12px; letter-spacing: 2px; }
+.result-box.correct .result-title { color: var(--green); }
+.result-box.wrong .result-title { color: var(--red); }
+.result-msg { font-family: var(--serif); font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 28px; }
+.result-rank { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 2px; margin-bottom: 24px; }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .game-body { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .docs-panel, .assistant-panel { display: none; }
+  .docs-panel.mobile-show, .assistant-panel.mobile-show { display: flex; flex-direction: column; }
+  .cabinet-body { grid-template-columns: 1fr; }
+  .cabinet-sidebar { display: none; }
+  .mobile-tabs {
+    display: flex; border-bottom: 1px solid var(--border); background: var(--bg2);
+  }
+  .mobile-tab {
+    flex: 1; padding: 12px; text-align: center; font-family: var(--mono);
+    font-size: 11px; letter-spacing: 1px; cursor: pointer; color: var(--text2);
+    border: none; background: none; border-bottom: 2px solid transparent;
+  }
+  .mobile-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+}
+@media (min-width: 769px) { .mobile-tabs { display: none; } }
+
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ═══ LANDING ═══════════════════════════════════════════════════ -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-inner">
+    <div class="landing-badge">▸ Частное следственное агентство</div>
+    <div class="landing-title">АГЕНТСТВО</div>
+    <div class="landing-sub">Закрытые дела</div>
+    <div class="landing-case">
+      <div class="landing-case-label">▸ Активное расследование</div>
+      <div class="landing-case-title">Дело №001 — СМЕНА</div>
+      <div class="landing-case-desc">Металлургический завод. Ночная смена. Технический директор найден мёртвым у мостика цеха №4. Полиция закрыла дело за 48 часов. Дочь погибшего не верит в несчастный случай.</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="showAuth('register')">Начать бесплатно</button>
+      <button class="btn btn-ghost" onclick="showAuth('login')">Войти</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AUTH ══════════════════════════════════════════════════════ -->
+<div id="screen-auth" class="screen">
+  <div class="auth-box">
+    <div class="auth-logo">АГЕНТСТВО</div>
+    <div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:28px;letter-spacing:2px;">ДОСТУП К БАЗЕ</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-register" onclick="switchTab('register')">Регистрация</button>
+      <button class="auth-tab" id="tab-login" onclick="switchTab('login')">Войти</button>
+    </div>
+    <div id="form-register">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="reg-email" placeholder="agent@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Позывной агента</label>
+        <input class="form-input" type="text" id="reg-name" placeholder="Введите имя">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input class="form-input" type="password" id="reg-pass" placeholder="Минимум 6 символов">
+      </div>
+      <div class="auth-error" id="reg-error"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="doRegister()">Создать профиль агента</button>
+    </div>
+    <div id="form-login" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="login-email" placeholder="agent@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <div class="auth-error" id="login-error"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Войти в систему</button>
+    </div>
+    <div class="auth-back"><a onclick="showScreen('landing')">← Вернуться</a></div>
+  </div>
+</div>
+
+<!-- ═══ CABINET ═══════════════════════════════════════════════════ -->
+<div id="screen-cabinet" class="screen">
+  <div class="cabinet-header">
+    <div class="cabinet-logo">АГЕНТСТВО</div>
+    <div class="cabinet-agent">
+      <span class="cabinet-agent-name" id="cab-agent-name">—</span>
+      <span id="cab-rank">Стажёр</span>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">Выйти</button>
+  </div>
+  <div class="cabinet-body">
+    <div class="cabinet-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Статус агента</div>
+        <div class="rank-badge">
+          <div class="rank-name" id="sidebar-rank">Стажёр</div>
+          <div class="rank-cases" id="sidebar-cases">Решено дел: 0</div>
+          <div class="rank-progress"><div class="rank-progress-fill" id="rank-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Достижения</div>
+        <div class="achievement-grid" id="achievements-grid">
+          <div class="achievement locked" title="Холодная голова">🧊<div class="achievement-tip">Холодная голова</div></div>
+          <div class="achievement locked" title="Интуиция">⚡<div class="achievement-tip">Интуиция</div></div>
+          <div class="achievement locked" title="Дотошный">🔍<div class="achievement-tip">Дотошный</div></div>
+          <div class="achievement locked" title="Ночная смена">🌙<div class="achievement-tip">Ночная смена</div></div>
+          <div class="achievement locked" title="Быстрее всех">⏱<div class="achievement-tip">Быстрее всех</div></div>
+          <div class="achievement locked" title="Архивариус">📚<div class="achievement-tip">Архивариус</div></div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Лидеры агентства</div>
+        <div class="leaderboard-list" id="leaderboard"></div>
+      </div>
+    </div>
+    <div class="cabinet-main">
+      <h2>ОТКРЫТЫЕ ДЕЛА</h2>
+      <div class="cases-grid" id="cases-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ GAME ═══════════════════════════════════════════════════════ -->
+<div id="screen-game" class="screen">
+  <div class="game-header">
+    <button class="game-back" onclick="showScreen('cabinet')">← Кабинет</button>
+    <div class="game-title" id="game-title">ДЕЛО №001</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3)" id="game-paid-status"></div>
+  </div>
+  <!-- Mobile tabs -->
+  <div class="mobile-tabs">
+    <button class="mobile-tab active" onclick="mobileSwitchTab('docs')">📁 Материалы</button>
+    <button class="mobile-tab" onclick="mobileSwitchTab('viewer')">📄 Документ</button>
+    <button class="mobile-tab" onclick="mobileSwitchTab('assistant')">💬 Помощник</button>
+  </div>
+  <div class="game-body">
+    <!-- LEFT -->
+    <div class="docs-panel" id="docs-panel">
+      <div class="docs-panel-title">📁 Материалы дела</div>
+      <div id="docs-list"></div>
+    </div>
+    <!-- CENTER -->
+    <div class="doc-viewer" id="doc-viewer">
+      <div class="doc-viewer-empty">
+        <div class="doc-viewer-empty-icon">🗂</div>
+        <div>Выберите документ из папки</div>
+      </div>
+    </div>
+    <!-- RIGHT -->
+    <div class="assistant-panel" id="assistant-panel">
+      <div class="assistant-header">
+        <div class="assistant-title">▸ Помощник</div>
+        <div class="assistant-name">Агент Соколов</div>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg system">Папка с материалами дела передана. Изучи документы и задавай вопросы.</div>
+      </div>
+      <div class="chat-actions">
+        <div class="chat-actions-label">▸ Действия</div>
+        <div id="action-buttons"></div>
+      </div>
+      <div class="accuse-section">
+        <div class="accuse-label">▸ Назвать подозреваемого</div>
+        <select class="suspect-select" id="suspect-select"><option value="">— выбрать —</option></select>
+        <button class="btn-accuse" onclick="doAccuse()">Предъявить обвинение</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAYWALL ════════════════════════════════════════════════════ -->
+<div class="paywall-overlay" id="paywall">
+  <div class="paywall-box">
+    <div class="paywall-icon">🔒</div>
+    <div class="paywall-title">ЗАКРЫТЫЕ МАТЕРИАЛЫ</div>
+    <div class="paywall-desc">Этот конверт меняет всё что ты думаешь о произошедшем. Полное расследование — все документы, допросы и финальный ответ.</div>
+    <div class="paywall-price">990 <span>руб.</span></div>
+    <button class="btn-pay" onclick="doPay()">Открыть полное дело</button>
+    <button class="paywall-close" onclick="closePaywall()">Закрыть</button>
+  </div>
+</div>
+
+<!-- ═══ RESULT ═════════════════════════════════════════════════════ -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-box" id="result-box">
+    <div class="result-icon" id="result-icon"></div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="result-rank" id="result-rank"></div>
+    <button class="btn btn-primary" onclick="closeResult()" style="margin-right:12px">Продолжить</button>
+    <button class="btn btn-ghost" onclick="showScreen('cabinet')">В кабинет</button>
+  </div>
+</div>
+
+<script>
+// ═══ CONFIG ═══════════════════════════════════════════════════════
+const API = ''; // пустая строка = тот же хост; замените на http://localhost:8000 для разработки
+
+// ═══ STATE ════════════════════════════════════════════════════════
+let state = {
+  token: localStorage.getItem('token') || null,
+  agent: localStorage.getItem('agent') || null,
+  rank: localStorage.getItem('rank') || null,
+  currentCase: null,
+  caseData: null,
+  unlockedDocs: [],
+  availableActions: [],
+  paid: false,
+};
+
+// ═══ UTILS ════════════════════════════════════════════════════════
+async function api(path, body=null, method='POST') {
+  const headers = {'Content-Type':'application/json'};
+  if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
+
+  const opts = { method, headers };
+  if (body !== null && method !== 'GET') opts.body = JSON.stringify(body);
+
+  const r = await fetch(API + path, opts);
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.detail || 'Ошибка сервера');
+  return data;
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+function showAuth(tab) { showScreen('auth'); switchTab(tab); }
+
+function switchTab(tab) {
+  document.getElementById('form-register').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+// ═══ AUTH ═════════════════════════════════════════════════════════
+async function doRegister() {
+  const email = document.getElementById('reg-email').value.trim();
+  const name = document.getElementById('reg-name').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  if (!email || !name || pass.length < 6) return showError('reg-error', 'Заполните все поля. Пароль — минимум 6 символов.');
+  try {
+    const res = await api('/api/register', {email, password: pass, agent_name: name});
+    saveSession(res.token, res.agent_name, res.rank);
+    await loadCabinet();
+    showScreen('cabinet');
+  } catch(e) { showError('reg-error', e.message); }
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  try {
+    const res = await api('/api/login', {email, password: pass});
+    saveSession(res.token, res.agent_name, res.rank);
+    await loadCabinet();
+    showScreen('cabinet');
+  } catch(e) { showError('login-error', e.message); }
+}
+
+function saveSession(token, agent, rank) {
+  state.token = token; state.agent = agent; state.rank = rank;
+  localStorage.setItem('token', token);
+  localStorage.setItem('agent', agent);
+  localStorage.setItem('rank', rank);
+}
+
+function doLogout() {
+  localStorage.clear(); state.token = null;
+  showScreen('landing');
+}
+
+// ═══ CABINET ══════════════════════════════════════════════════════
+async function loadCabinet() {
+  document.getElementById('cab-agent-name').textContent = state.agent;
+  document.getElementById('cab-rank').textContent = state.rank;
+  document.getElementById('sidebar-rank').textContent = state.rank;
+
+  try {
+    const profile = await api('/api/profile', null, 'GET');
+    document.getElementById('sidebar-cases').textContent = `Решено дел: ${profile.cases_solved}`;
+
+    // rank progress bar
+    const ranks = ['Стажёр','Младший агент','Агент','Старший агент','Эксперт','Легенда агентства'];
+    const thresholds = [0,1,3,5,8,15];
+    const idx = ranks.indexOf(profile.rank);
+    const next = thresholds[idx+1] || 20;
+    const pct = Math.min(100, ((profile.cases_solved - thresholds[idx]) / (next - thresholds[idx])) * 100);
+    document.getElementById('rank-bar').style.width = pct + '%';
+
+    // achievements
+    const earned = profile.achievements.map(a => a.achievement_key);
+    const keys = ['cold_head','intuition','thorough','night_shift','fastest','archivist'];
+    document.querySelectorAll('.achievement').forEach((el, i) => {
+      if (earned.includes(keys[i])) el.classList.remove('locked');
+    });
+
+    // leaderboard
+    const lb = document.getElementById('leaderboard');
+    lb.innerHTML = profile.leaderboard.map((u,i) =>
+      `<div class="leaderboard-item">
+        <span class="leaderboard-pos">${i+1}.</span>
+        <span class="leaderboard-name">${u.agent_name}</span>
+        <span class="leaderboard-rank">${u.rank}</span>
+      </div>`
+    ).join('');
+  } catch(e) { console.log(e); }
+
+  // cases
+  const res = await fetch(API + '/api/cases');
+  const cases = await res.json();
+  const grid = document.getElementById('cases-grid');
+  grid.innerHTML = cases.map(c => `
+    <div class="case-card" onclick="openCase('${c.id}')">
+      <div class="case-card-num">▸ ДЕЛО ОТКРЫТО</div>
+      <div class="case-card-title">${c.title}</div>
+      <div class="case-card-sub">${c.subtitle}</div>
+      <div class="case-card-status"><div class="status-dot"></div>Демо доступно</div>
+    </div>
+  `).join('');
+}
+
+// ═══ GAME ═════════════════════════════════════════════════════════
+async function openCase(caseId) {
+  state.currentCase = caseId;
+  showScreen('game');
+  const data = await api('/api/case/start', {case_id: caseId});
+  state.caseData = data;
+  state.unlockedDocs = data.unlocked_docs || [];
+  state.availableActions = data.actions || [];
+  state.paid = data.paid;
+
+  document.getElementById('game-title').textContent = data.case.title;
+  document.getElementById('game-paid-status').textContent = data.paid ? '🔓 ПОЛНАЯ ВЕРСИЯ' : '🔒 ДЕМО';
+
+  // suspects
+  const sel = document.getElementById('suspect-select');
+  sel.innerHTML = '<option value="">— выбрать —</option>' +
+    data.case.suspects.map(s => `<option value="${s}">${s}</option>`).join('');
+
+  renderDocs(data.docs);
+  renderActions(data.actions);
+
+  // welcome msg
+  addChatMsg('system', `Дело получено. Жертва: ${data.case.victim}. Место: ${data.case.location}. Официальная версия: ${data.case.official_version}. Агентство считает иначе.`);
+}
+
+function renderDocs(docs) {
+  // Group by category
+  const cats = {};
+  docs.forEach(d => {
+    if (!cats[d.category]) cats[d.category] = [];
+    cats[d.category].push(d);
+  });
+  const list = document.getElementById('docs-list');
+  list.innerHTML = Object.entries(cats).map(([cat, items]) => `
+    <div class="docs-category">
+      <div class="docs-cat-label">${cat}</div>
+      ${items.map(d => `
+        <div class="doc-item ${state.unlockedDocs.includes(d.id) ? 'seen' : ''}" id="docitem-${d.id}" onclick="openDoc('${d.id}')">
+          <span class="doc-icon">📄</span>
+          <span class="doc-name">${d.title}</span>
+          ${state.unlockedDocs.includes(d.id) ? '<span class="doc-check">✓</span>' : ''}
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function renderActions(actions) {
+  const container = document.getElementById('action-buttons');
+  container.innerHTML = actions.map(a => `
+    <button class="action-btn" onclick="doAction('${a.id}')">▸ ${a.label}</button>
+  `).join('');
+}
+
+async function openDoc(docId) {
+  const docs = state.caseData.docs;
+  const doc = docs.find(d => d.id === docId);
+  if (!doc) return;
+
+  // Mark active
+  document.querySelectorAll('.doc-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('docitem-' + docId);
+  if (el) el.classList.add('active');
+
+  // Show content
+  const viewer = document.getElementById('doc-viewer');
+  viewer.innerHTML = `
+    <div class="doc-content">
+      <div class="doc-content-header">
+        <div class="doc-content-title">${doc.title}</div>
+        <div class="doc-content-cat">▸ ${doc.category}</div>
+      </div>
+      <div class="doc-content-body">${doc.content}</div>
+    </div>
+  `;
+
+  // Track open
+  if (!state.unlockedDocs.includes(docId)) {
+    try {
+      const res = await api('/api/case/open_doc', {case_id: state.currentCase, doc_id: docId});
+      state.unlockedDocs = res.unlocked_docs;
+      renderActions(res.available_actions);
+      // update checkmark
+      if (el) { el.querySelector('.doc-check') || el.insertAdjacentHTML('beforeend', '<span class="doc-check">✓</span>'); }
+    } catch(e) {}
+  }
+}
+
+async function doAction(actionId) {
+  try {
+    const res = await api('/api/case/action', {case_id: state.currentCase, action: actionId});
+    addChatMsg('assistant', res.response);
+  } catch(e) { addChatMsg('system', 'Ошибка: ' + e.message); }
+}
+
+function addChatMsg(type, text) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${type}`;
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function doAccuse() {
+  const suspect = document.getElementById('suspect-select').value;
+  if (!suspect) return alert('Выберите подозреваемого');
+  try {
+    const res = await api('/api/case/accuse', {case_id: state.currentCase, suspect});
+    if (res.result === 'demo_end') {
+      showPaywall();
+    } else if (res.result === 'correct') {
+      showResult('correct', '✓', 'ВЕРНО', res.message, res.rank);
+    } else {
+      showResult('wrong', '✗', 'НЕВЕРНО', res.message, null);
+    }
+  } catch(e) { addChatMsg('system', 'Ошибка: ' + e.message); }
+}
+
+// ═══ PAYWALL ══════════════════════════════════════════════════════
+function showPaywall() { document.getElementById('paywall').classList.add('show'); }
+function closePaywall() { document.getElementById('paywall').classList.remove('show'); }
+
+async function doPay() {
+  // Инициализация платежа
+  const res = await api('/api/payment/init', {case_id: state.currentCase});
+  // В тестовом режиме — сразу подтверждаем
+  // В продакшне — редирект на res.payment_url (ЮКасса)
+  await api('/api/payment/confirm', {case_id: state.currentCase});
+  closePaywall();
+  await openCase(state.currentCase); // перезагружаем дело с платным контентом
+}
+
+// ═══ RESULT ═══════════════════════════════════════════════════════
+function showResult(type, icon, title, msg, rank) {
+  const box = document.getElementById('result-box');
+  box.className = 'result-box ' + type;
+  document.getElementById('result-icon').textContent = icon;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-rank').textContent = rank ? `Новое звание: ${rank}` : '';
+  document.getElementById('result-overlay').classList.add('show');
+}
+function closeResult() { document.getElementById('result-overlay').classList.remove('show'); }
+
+// ═══ MOBILE TABS ══════════════════════════════════════════════════
+function mobileSwitchTab(tab) {
+  document.querySelectorAll('.mobile-tab').forEach((t,i) => {
+    t.classList.toggle('active', ['docs','viewer','assistant'][i] === tab);
+  });
+  document.getElementById('docs-panel').classList.toggle('mobile-show', tab === 'docs');
+  document.getElementById('doc-viewer').style.display = tab === 'viewer' ? '' : 'none';
+  document.getElementById('assistant-panel').classList.toggle('mobile-show', tab === 'assistant');
+}
+
+// ═══ INIT ═════════════════════════════════════════════════════════
+(async () => {
+  if (state.token) {
+    try {
+      await loadCabinet();
+      showScreen('cabinet');
+    } catch(e) {
+      localStorage.clear();
+      showScreen('landing');
+    }
+  } else {
+    showScreen('landing');
+  }
+})();
+</script>
+</body>
+</html>

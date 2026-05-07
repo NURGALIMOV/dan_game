@@ -1,0 +1,56 @@
+databaseChangeLog:
+
+  - changeSet:
+      id:     002-create-progress
+      author: dangame
+      changes:
+        - createTable:
+            tableName: progress
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable:   false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable:        false
+                    foreignKeyName:  fk_progress_user
+                    references:      users(id)
+              - column:
+                  name: case_id
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name:         unlocked_docs
+                  type:         TEXT
+                  defaultValue: "[]"
+              - column:
+                  name:         actions_log
+                  type:         TEXT
+                  defaultValue: "[]"
+              - column:
+                  name:                paid
+                  type:                INTEGER
+                  defaultValueNumeric: 0
+              - column:
+                  name:                completed
+                  type:                INTEGER
+                  defaultValueNumeric: 0
+              - column:
+                  name:                attempts
+                  type:                INTEGER
+                  defaultValueNumeric: 0
+              - column:
+                  name:                 started_at
+                  type:                 TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name:                 updated_at
+                  type:                 TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
