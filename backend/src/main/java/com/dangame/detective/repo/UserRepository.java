@@ -12,5 +12,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByToken(String token);
 
+    Optional<UserEntity> findByVerificationToken(String verificationToken);
+
     List<UserEntity> findTop10ByOrderByCasesSolvedDesc();
 }

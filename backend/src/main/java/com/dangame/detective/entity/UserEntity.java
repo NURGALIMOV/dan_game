@@ -43,4 +43,13 @@ public class UserEntity {
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "email_verified", nullable = false)
+    private Boolean emailVerified = false;
+
+    @Column(name = "verification_token", unique = true)
+    private String verificationToken;
+
+    @Column(name = "verification_sent_at")
+    private LocalDateTime verificationSentAt;
 }

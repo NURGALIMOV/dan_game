@@ -18,6 +18,17 @@ services:
       timeout:  5s
       retries:  10
 
+  mailhog:
+    # Локальный SMTP-сервер с веб-интерфейсом для просмотра писем.
+    # SMTP — на 1025 (внутренний), UI — на 8025 (открой http://localhost:8025).
+    image: mailhog/mailhog:latest
+    container_name: dangame-mailhog
+    restart: unless-stopped
+    ports:
+      - "${MAILHOG_UI_PORT:-8025}:8025"
+    networks:
+      - internal
+
   backend:
     build: ./backend
     container_name: dangame-backend
@@ -25,10 +36,28 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      mailhog:
+        condition: service_started
     environment:
       SPRING_DATASOURCE_URL:      jdbc:postgresql://db:5432/${POSTGRES_DB:-detective}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-detective}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-detective_pass}
+      # ─── SMTP ───────────────────────────────────────────────────
+      # По умолчанию шлём в локальный MailHog. Для прода переопредели через .env:
+      #   SPRING_MAIL_HOST=smtp.sendgrid.net
+      #   SPRING_MAIL_PORT=587
+      #   SPRING_MAIL_USERNAME=apikey
+      #   SPRING_MAIL_PASSWORD=<твой SendGrid API key>
+      #   APP_MAIL_FROM=noreply@<домен>
+      SPRING_MAIL_HOST:     ${SPRING_MAIL_HOST:-mailhog}
+      SPRING_MAIL_PORT:     ${SPRING_MAIL_PORT:-1025}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-}
+      APP_MAIL_FROM:        ${APP_MAIL_FROM:-noreply@game.test}
+      APP_PUBLIC_URL:       ${APP_PUBLIC_URL:-http://localhost}
+      # Локально верификация выключена — иначе для каждого регистрируешь новую почту.
+      # В проде поставь true в .env (или просто убери эту строку — default = true).
+      APP_REQUIRE_EMAIL_VERIFICATION: ${APP_REQUIRE_EMAIL_VERIFICATION:-false}
     networks:
       - internal
 

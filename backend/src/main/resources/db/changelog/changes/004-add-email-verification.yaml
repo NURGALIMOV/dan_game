@@ -1,0 +1,29 @@
+databaseChangeLog:
+
+  - changeSet:
+      id:     004-add-email-verification
+      author: dangame
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name:                email_verified
+                  type:                BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: verification_token
+                  type: TEXT
+              - column:
+                  name: verification_sent_at
+                  type: TIMESTAMP
+
+        - createIndex:
+            tableName: users
+            indexName:  idx_users_verification_token
+            unique:     true
+            columns:
+              - column:
+                  name: verification_token

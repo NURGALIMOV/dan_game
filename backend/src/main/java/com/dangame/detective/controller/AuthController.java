@@ -7,8 +7,10 @@ import com.dangame.detective.dto.Dtos.Register;
 import com.dangame.detective.entity.UserEntity;
 import com.dangame.detective.mapper.UserMapper;
 import com.dangame.detective.repo.UserRepository;
+import com.dangame.detective.service.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.HexFormat;
 
 @RestController
@@ -31,6 +34,10 @@ public class AuthController {
     private final UserRepository users;
     private final BCryptPasswordEncoder encoder;
     private final UserMapper userMapper;
+    private final EmailService emailService;
+
+    @Value("${app.require-email-verification:true}")
+    private boolean requireEmailVerification;
 
     @PostMapping("/register")
     @Transactional
@@ -46,7 +53,17 @@ public class AuthController {
         user.setRank("Стажёр");
         user.setCasesSolved(0);
 
-        users.save(user);
+        if (requireEmailVerification) {
+            user.setEmailVerified(false);
+            user.setVerificationToken(newToken());
+            user.setVerificationSentAt(LocalDateTime.now());
+            users.save(user);
+            emailService.sendVerification(user);
+        } else {
+            // Dev / preview режим: верификация выключена.
+            user.setEmailVerified(true);
+            users.save(user);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toAuthResponse(user));
     }
 

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public final class Dtos {
 
@@ -45,7 +46,8 @@ public final class Dtos {
 
     public record Accuse(
         @NotBlank(message = "case_id обязателен") String caseId,
-        @NotBlank(message = "suspect обязателен") String suspect
+        @NotBlank(message = "suspect обязателен") String suspect,
+        List<String> selectedEvidences
     ) {}
 
     public record Payment(
@@ -55,13 +57,18 @@ public final class Dtos {
     // ─── RESPONSES ───────────────────────────────────────────────────────
 
     public record AuthResponse(
-        String token,
-        String agentName,
-        String rank
+        String  token,
+        String  agentName,
+        String  rank,
+        Boolean emailVerified
     ) {}
 
     public record AchievementDto(
         String        achievementKey,
+        String        title,
+        String        description,
+        String        icon,
+        boolean       earned,
         LocalDateTime earnedAt
     ) {}
 

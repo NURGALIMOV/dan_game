@@ -18,6 +18,30 @@ spring:
           time_zone: UTC
   jackson:
     property-naming-strategy: SNAKE_CASE
+  mail:
+    host:     ${SPRING_MAIL_HOST:mailhog}
+    port:     ${SPRING_MAIL_PORT:1025}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth:                  ${SPRING_MAIL_AUTH:false}
+          starttls:
+            enable:              ${SPRING_MAIL_STARTTLS:false}
+          ssl:
+            trust:               "*"
+        # connection-/read-timeout — чтобы при недоступном SMTP запрос регистрации не висел
+        debug: false
+
+# ─── Прикладные настройки рассылок ───────────────────────────────────
+app:
+  mail:
+    from: ${APP_MAIL_FROM:noreply@game.test}
+  public-url: ${APP_PUBLIC_URL:http://localhost}
+  # Если false — пропускаем верификацию email: при регистрации сразу verified=true,
+  # письма не шлём, оплата не блокируется. Удобно для dev / preview.
+  require-email-verification: ${APP_REQUIRE_EMAIL_VERIFICATION:true}
 
 logging:
   level:
