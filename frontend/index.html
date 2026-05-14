@@ -755,6 +755,11 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       <div class="epilogue-story" id="ep-sentence"></div>
     </section>
 
+    <section class="epilogue-section" id="ep-additional-section" style="display:none">
+      <h3 class="epilogue-h">▸ Дополнительные материалы — открыты после раскрытия</h3>
+      <div class="epilogue-clues" id="ep-additional"></div>
+    </section>
+
     <section class="epilogue-section">
       <div class="epilogue-press" id="ep-press"></div>
     </section>
@@ -1391,6 +1396,22 @@ function renderEpilogue(data) {
         <div class="epilogue-clue-text">${c.explanation}</div>
       </div>
     `).join('');
+
+  // Дополнительные материалы (открываются только в эпилоге)
+  const addDocs = data.additional_docs || [];
+  const addSection = document.getElementById('ep-additional-section');
+  const addBox     = document.getElementById('ep-additional');
+  if (addDocs.length === 0) {
+    addSection.style.display = 'none';
+  } else {
+    addSection.style.display = '';
+    addBox.innerHTML = addDocs.map(d => `
+      <div class="epilogue-clue">
+        <div class="epilogue-clue-title">${d.category} — ${d.title}</div>
+        <div class="epilogue-clue-text" style="white-space: pre-wrap; font-size:12.5px;">${d.content}</div>
+      </div>
+    `).join('');
+  }
 }
 
 // ═══ MOBILE TABS ══════════════════════════════════════════════════

@@ -360,6 +360,7 @@ public class CaseController {
         resp.put("official_misses",  ep.officialMisses());
         resp.put("sentence",         ep.sentence());
         resp.put("press_note",       ep.pressNote());
+        resp.put("additional_docs",  ep.additionalDocs() != null ? ep.additionalDocs() : List.of());
         return resp;
     }
 
