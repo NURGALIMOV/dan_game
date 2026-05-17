@@ -53,9 +53,24 @@ public class CaseController {
     private final ObjectMapper json;
 
     @GetMapping("/cases")
-    public List<Map<String, String>> listCases() {
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> listCases(@CurrentUser UserEntity user) {
         return Cases.CASES.values().stream()
-            .map(c -> Map.of("id", c.id(), "title", c.title(), "subtitle", c.subtitle()))
+            .map(c -> {
+                Map<String, Object> result = new LinkedHashMap<>();
+                result.put("id", c.id());
+                result.put("title", c.title());
+                result.put("subtitle", c.subtitle());
+                // Статус прохождения для конкретного пользователя
+                ProgressEntity prog = progresses
+                    .findByUserIdAndCaseId(user.getId(), c.id())
+                    .orElse(null);
+                boolean paid = prog != null && prog.getPaid() == 1;
+                boolean completed = prog != null && prog.getCompleted() == 1;
+                result.put("paid", paid);
+                result.put("completed", completed);
+                return result;
+            })
             .toList();
     }
 

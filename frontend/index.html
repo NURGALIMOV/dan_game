@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>АГЕНТСТВО — Закрытые дела</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Share+Tech+Mono&family=Special+Elite&family=Special+Elite:wght@400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -25,6 +25,16 @@
   --mono: 'Share Tech Mono', monospace;
   --serif: 'Courier Prime', monospace;
   --display: 'Bebas Neue', sans-serif;
+  --typewriter: 'Special Elite', 'Courier Prime', monospace;
+
+  /* ─── DOSSIER PAPER PALETTE (стиль папки дела) ─── */
+  --paper:        #d9c79a;    /* основной тон состаренной бумаги */
+  --paper-dark:   #b8a578;    /* тени, складки */
+  --paper-light:  #e8d7a8;    /* света на бумаге */
+  --paper-ink:    #1a1612;    /* чернила машинописи */
+  --paper-ink2:   #3a2f24;    /* выцветшие чернила */
+  --paper-red:    #8b2c2c;    /* красные штампы, акценты */
+  --paper-rust:   #8a5a3b;    /* ржавчина / печати */
 }
 
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--serif); }
@@ -109,263 +119,1018 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .auth-back a:hover { color: var(--text2); }
 
 /* ─── CABINET ──────────────────────────────────────────────────── */
-#screen-cabinet { background: var(--bg); }
+/* ═══ CABINET — стол детектива ═══ */
+#screen-cabinet {
+  background-color: #1a1410;
+  background-image:
+    radial-gradient(ellipse at center, rgba(58,38,20,0.5), rgba(0,0,0,0.4) 80%),
+    /* «деревянная» текстура стола */
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 3px, transparent 3px 7px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0 200px, transparent 200px 220px);
+}
+/* Шапка кабинета — как табличка на двери */
 .cabinet-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--bg2);
+  padding: 14px 28px; flex-shrink: 0; position: relative;
+  background-color: var(--paper);
+  background-image: linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+  border-bottom: 3px double var(--paper-rust);
+  color: var(--paper-ink);
 }
-.cabinet-logo { font-family: var(--display); font-size: 28px; color: var(--accent); letter-spacing: 2px; }
-.cabinet-agent { font-family: var(--mono); font-size: 12px; color: var(--text2); text-align: right; }
-.cabinet-agent-name { color: var(--accent); font-size: 14px; display: block; }
-.cabinet-body { display: grid; grid-template-columns: 280px 1fr; flex: 1; min-height: calc(100vh - 57px); }
-.cabinet-sidebar { border-right: 1px solid var(--border); padding: 24px; background: var(--bg2); }
-.sidebar-section { margin-bottom: 32px; }
-.sidebar-label { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: var(--accent2); margin-bottom: 16px; text-transform: uppercase; }
+.cabinet-header::before {
+  /* зернистость */
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.25; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.10  0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.cabinet-logo {
+  font-family: var(--display); font-size: 30px; color: var(--paper-ink);
+  letter-spacing: 4px; position: relative; z-index: 1;
+}
+.cabinet-agent {
+  font-family: var(--typewriter); font-size: 12px; color: var(--paper-ink2);
+  text-align: right; position: relative; z-index: 1; letter-spacing: 1px;
+}
+.cabinet-agent-name {
+  color: var(--paper-red); font-size: 14px; display: block;
+  font-weight: bold; letter-spacing: 1.5px;
+}
+
+.cabinet-body { display: grid; grid-template-columns: 320px 1fr; flex: 1; min-height: calc(100vh - 60px); }
+
+/* Сайдбар — как папка-планшет на углу стола */
+.cabinet-sidebar {
+  padding: 24px 22px;
+  background-color: var(--paper);
+  background-image:
+    repeating-linear-gradient(transparent 0 28px, rgba(58,38,20,0.10) 28px 29px),
+    radial-gradient(ellipse at top, rgba(0,0,0,0) 60%, rgba(58,38,20,0.18) 100%),
+    linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+  border-right: 1px solid var(--paper-rust);
+  color: var(--paper-ink);
+  position: relative;
+  box-shadow: 4px 0 18px rgba(0,0,0,0.45);
+}
+.cabinet-sidebar::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.2; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.10  0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.sidebar-section { margin-bottom: 26px; position: relative; z-index: 1; }
+.sidebar-label {
+  font-family: var(--typewriter); font-size: 10px; letter-spacing: 3px;
+  color: var(--paper-red); margin-bottom: 12px; text-transform: uppercase;
+  font-weight: bold;
+  border-bottom: 1px solid var(--paper-rust); padding-bottom: 6px;
+}
+
 .rank-badge {
-  background: rgba(200,169,110,.08); border: 1px solid var(--accent2);
-  padding: 16px; margin-bottom: 12px;
+  background: var(--paper-light); border: 1.5px solid var(--paper-ink);
+  padding: 14px; margin-bottom: 12px; position: relative;
 }
-.rank-name { font-family: var(--display); font-size: 24px; color: var(--accent); margin-bottom: 4px; }
-.rank-cases { font-family: var(--mono); font-size: 11px; color: var(--text2); }
-.rank-progress { height: 2px; background: var(--border); margin-top: 12px; }
-.rank-progress-fill { height: 100%; background: var(--accent); transition: width .5s; }
+.rank-badge::before {
+  content: '☆ РАНГ ☆';
+  position: absolute; top: -8px; left: 14px;
+  background: var(--paper-light); padding: 0 8px;
+  font-family: var(--typewriter); font-size: 9px;
+  color: var(--paper-red); letter-spacing: 2px;
+}
+.rank-name {
+  font-family: var(--display); font-size: 24px; color: var(--paper-ink);
+  margin-bottom: 4px; letter-spacing: 2px;
+}
+.rank-cases {
+  font-family: var(--typewriter); font-size: 11px; color: var(--paper-ink2);
+  letter-spacing: 1px;
+}
+.rank-progress {
+  height: 4px; background: rgba(58,38,20,0.2); margin-top: 12px;
+  border: 1px solid var(--paper-rust);
+}
+.rank-progress-fill { height: 100%; background: var(--paper-red); transition: width .5s; }
+
 .achievement-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
 .achievement {
-  aspect-ratio: 1; background: var(--bg3); border: 1px solid var(--border);
+  aspect-ratio: 1; background: var(--paper-light);
+  border: 1.5px solid var(--paper-rust);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-size: 22px; cursor: default; position: relative;
+  font-size: 24px; cursor: default; position: relative;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
 }
-.achievement.earned { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(217,180,107,0.15) inset; }
-.achievement.locked { filter: grayscale(1); opacity: .35; }
+.achievement.earned {
+  border-color: var(--paper-red); border-width: 2px;
+  background: linear-gradient(135deg, rgba(139,44,44,0.08), var(--paper-light));
+  box-shadow: 0 0 0 1px rgba(139,44,44,0.2) inset, 2px 2px 4px rgba(0,0,0,0.2);
+}
+.achievement.locked { filter: sepia(0.5) grayscale(0.7); opacity: .4; }
 .achievement-tip {
   position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
-  background: var(--bg3); border: 1px solid var(--border2); padding: 8px 12px;
-  font-family: var(--mono); font-size: 10px; color: var(--text); width: 200px;
+  background: var(--paper); border: 1.5px solid var(--paper-ink); padding: 8px 12px;
+  font-family: var(--typewriter); font-size: 10px; color: var(--paper-ink); width: 210px;
   pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 10; text-align: left;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
 }
-.achievement-tip-title { font-family: var(--display); color: var(--accent); font-size: 12px; letter-spacing: 1px; margin-bottom: 4px; }
-.achievement-tip-desc  { font-family: var(--serif); color: var(--text2); font-size: 11px; line-height: 1.4; }
-.achievement-tip-status { font-family: var(--mono); color: var(--text3); font-size: 9px; margin-top: 6px; letter-spacing: 1px; }
-.achievement.earned .achievement-tip-status { color: var(--accent); }
+.achievement-tip-title {
+  font-family: var(--typewriter); font-weight: bold;
+  color: var(--paper-red); font-size: 11px; letter-spacing: 1.5px;
+  margin-bottom: 4px; text-transform: uppercase;
+}
+.achievement-tip-desc { font-family: var(--typewriter); color: var(--paper-ink); font-size: 11px; line-height: 1.4; }
+.achievement-tip-status {
+  font-family: var(--typewriter); color: var(--paper-ink2); font-size: 9px;
+  margin-top: 6px; letter-spacing: 1px; font-weight: bold;
+}
+.achievement.earned .achievement-tip-status { color: var(--paper-red); }
 .achievement:hover .achievement-tip { opacity: 1; }
-.ach-counter { font-family: var(--mono); font-size: 10px; color: var(--accent); margin-left: 6px; letter-spacing: 1px; }
+.ach-counter {
+  font-family: var(--typewriter); font-size: 10px; color: var(--paper-red);
+  margin-left: 6px; letter-spacing: 1px; font-weight: bold;
+}
+
 .leaderboard-list { }
 .leaderboard-item {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 0; border-bottom: 1px solid var(--border);
-  font-family: var(--mono); font-size: 11px;
+  padding: 7px 0; border-bottom: 1px dashed var(--paper-rust);
+  font-family: var(--typewriter); font-size: 11px;
 }
 .leaderboard-item:last-child { border: none; }
-.leaderboard-pos { color: var(--text3); width: 24px; }
-.leaderboard-name { color: var(--text); flex: 1; padding: 0 8px; }
-.leaderboard-rank { color: var(--accent2); font-size: 10px; }
-.cabinet-main { padding: 32px; }
-.cabinet-main h2 { font-family: var(--display); font-size: 32px; color: var(--text); letter-spacing: 2px; margin-bottom: 24px; }
-.cases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-.case-card {
-  border: 1px solid var(--border2); padding: 24px; background: var(--bg2);
-  cursor: pointer; transition: border-color .2s;
+.leaderboard-pos { color: var(--paper-ink2); width: 24px; font-weight: bold; }
+.leaderboard-name { color: var(--paper-ink); flex: 1; padding: 0 8px; }
+.leaderboard-rank { color: var(--paper-red); font-size: 10px; }
+
+/* Главный блок: «открытые дела» — папки на столе */
+.cabinet-main {
+  padding: 36px 40px;
+  position: relative;
 }
-.case-card:hover { border-color: var(--accent2); }
-.case-card-num { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 3px; margin-bottom: 12px; }
-.case-card-title { font-family: var(--display); font-size: 24px; color: var(--text); margin-bottom: 8px; }
-.case-card-sub { font-family: var(--serif); font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
-.case-card-status { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-.status-dot.paid { background: var(--green); }
-.btn-logout { background: none; border: none; color: var(--text3); font-family: var(--mono); font-size: 11px; cursor: pointer; letter-spacing: 1px; }
+.cabinet-main h2 {
+  font-family: var(--display); font-size: 36px;
+  color: var(--paper-light); letter-spacing: 4px; margin-bottom: 28px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  padding-bottom: 14px;
+  border-bottom: 2px dashed rgba(217,199,154,0.3);
+}
+.cases-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 26px;
+}
+/* Карточка дела — большая папка на столе */
+.case-card {
+  position: relative; padding: 22px 22px 18px;
+  background-color: var(--paper);
+  background-image: linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+  border: 1px solid var(--paper-rust);
+  border-left: 6px solid var(--paper-red);
+  color: var(--paper-ink);
+  cursor: pointer; transition: transform .15s, box-shadow .15s;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3);
+  transform: rotate(-0.7deg);
+}
+.case-card:nth-child(even) { transform: rotate(0.6deg); }
+.case-card:hover {
+  transform: rotate(0) translateY(-4px);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.65), 0 4px 8px rgba(0,0,0,0.35);
+}
+/* Раскрытое дело — штамп «ЗАКРЫТО» в углу */
+.case-card.completed { opacity: 0.92; }
+.case-card.completed::after {
+  content: 'ЗАКРЫТО'; position: absolute; top: 14px; right: 14px;
+  font-family: var(--typewriter); font-weight: bold;
+  font-size: 13px; letter-spacing: 3px;
+  color: #3d8b5e; border: 2px solid #3d8b5e;
+  padding: 3px 9px; transform: rotate(-8deg);
+  opacity: 0.85; z-index: 3;
+}
+.case-card.completed .case-card-title { color: var(--paper-ink2); }
+/* Канцелярская кнопка сверху */
+.case-card::before {
+  content: ''; position: absolute; top: -6px; right: 24px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #e74c4c, #6b2020);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  z-index: 2;
+}
+/* Лёгкая зернистость прямо в фоне (чтобы ::after был свободен под штамп) */
+.case-card {
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.10  0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+}
+.case-card-num {
+  font-family: var(--typewriter); font-size: 10px;
+  color: var(--paper-red); letter-spacing: 3px; margin-bottom: 12px;
+  font-weight: bold; text-transform: uppercase;
+}
+.case-card-title {
+  font-family: var(--display); font-size: 28px; color: var(--paper-ink);
+  margin-bottom: 10px; letter-spacing: 2px; line-height: 1.05;
+}
+.case-card-sub {
+  font-family: var(--typewriter); font-size: 12.5px; color: var(--paper-ink2);
+  margin-bottom: 22px; line-height: 1.55;
+}
+.case-card-status {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--typewriter); font-size: 10px;
+  letter-spacing: 1.5px; color: var(--paper-ink);
+  border: 1.5px solid var(--paper-red); background: rgba(139,44,44,0.07);
+  padding: 5px 11px; text-transform: uppercase; font-weight: bold;
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--paper-red); }
+.status-dot.paid { background: #3d8b5e; }
+
+.btn-logout {
+  background: transparent; border: 1px solid var(--paper-ink2);
+  color: var(--paper-ink); font-family: var(--typewriter); font-size: 11px;
+  cursor: pointer; letter-spacing: 1px; padding: 6px 12px;
+  position: relative; z-index: 1;
+}
+.btn-logout:hover { color: var(--paper-red); border-color: var(--paper-red); }
 .btn-logout:hover { color: var(--red); }
 
 /* ─── GAME ─────────────────────────────────────────────────────── */
-#screen-game { background: var(--bg); flex-direction: column; }
+#screen-game {
+  /* Тёмная подложка — «стол следователя» */
+  background-color: #1a1410;
+  background-image:
+    radial-gradient(ellipse at center, rgba(58,38,20,0.4), transparent 70%),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.04) 0 3px, transparent 3px 6px);
+  flex-direction: column;
+}
 #screen-game.active { height: 100vh; min-height: 0; overflow: hidden; }
 .game-header { position: relative; z-index: 5; }
 .game-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2);
-  flex-shrink: 0;
+  padding: 16px 28px; flex-shrink: 0;
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(58,38,20,0.15) 100%),
+    linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+  border-bottom: 4px double var(--paper-rust);
+  color: var(--paper-ink);
+  position: relative; overflow: hidden;
+  min-height: 78px;
 }
-.game-title { font-family: var(--display); font-size: 20px; color: var(--accent); letter-spacing: 2px; }
-.game-back { background: none; border: none; color: var(--text2); font-family: var(--mono); font-size: 11px; cursor: pointer; letter-spacing: 1px; }
-.game-back:hover { color: var(--accent); }
+/* лёгкая зернистость в шапку */
+.game-header::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.3; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.10  0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.game-header::after {
+  /* угловой круглый штамп «АГЕНТСТВО» в шапке */
+  content: 'АГЕНТСТВО\A 2024'; white-space: pre;
+  position: absolute; top: 50%; right: 96px;
+  transform: translateY(-50%) rotate(-9deg);
+  font-family: var(--typewriter); font-size: 9px; letter-spacing: 2.5px;
+  color: var(--paper-red);
+  border: 2px solid var(--paper-red); border-radius: 50%;
+  width: 62px; height: 62px;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  opacity: 0.85; pointer-events: none; line-height: 1.3;
+  box-shadow: inset 0 0 0 1px rgba(139,44,44,0.4);
+}
+.game-title-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  position: relative; z-index: 1;
+}
+.game-title {
+  font-family: var(--display); font-size: 30px; color: var(--paper-ink);
+  letter-spacing: 5px; line-height: 1;
+}
+.game-title-sub {
+  font-family: var(--typewriter); font-size: 10px; color: var(--paper-ink2);
+  letter-spacing: 4px; margin-top: 4px; text-transform: uppercase;
+}
+.game-back {
+  background: transparent; border: 1.5px solid var(--paper-ink2);
+  color: var(--paper-ink); font-family: var(--typewriter); font-size: 12px;
+  cursor: pointer; letter-spacing: 1.5px; padding: 8px 14px;
+  position: relative; z-index: 1;
+}
+.game-back:hover { color: var(--paper-red); border-color: var(--paper-red); }
+#game-paid-status {
+  font-family: var(--typewriter); font-size: 11px; color: var(--paper-red);
+  letter-spacing: 2px; padding: 5px 11px; border: 1.5px solid var(--paper-red);
+  font-weight: bold; position: relative; z-index: 1;
+}
 .game-body {
   display: grid;
   grid-template-columns: 280px 1fr 340px;
   flex: 1; overflow: hidden; min-height: 0;
 }
 
-/* ─── ASSISTANT (LEFT) — fixed-height with internal scroll ─── */
+/* ─── ASSISTANT (LEFT) — блокнот следователя ─── */
 .assistant-panel {
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; background: var(--bg2);
-  min-height: 0; overflow: hidden;
+  display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+  color: var(--paper-ink);
+  background-color: var(--paper);
+  background-image:
+    /* Горизонтальные линии «линованной бумаги» */
+    repeating-linear-gradient(transparent 0 26px, rgba(58,38,20,0.10) 26px 27px),
+    radial-gradient(ellipse at top, rgba(0,0,0,0) 60%, rgba(58,38,20,0.18) 100%),
+    linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+  border-right: 1px solid var(--paper-rust);
+  position: relative;
 }
-.assistant-header { padding: 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-.assistant-title { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: var(--accent2); text-transform: uppercase; margin-bottom: 4px; }
-.assistant-name  { font-family: var(--display); font-size: 20px; color: var(--text); }
+/* Зернистость */
+.assistant-panel::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.25; mix-blend-mode: multiply; z-index: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.10  0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.assistant-header {
+  padding: 16px 18px; border-bottom: 2px dashed var(--paper-rust);
+  flex-shrink: 0; position: relative; z-index: 1;
+}
+.assistant-title {
+  font-family: var(--typewriter); font-size: 10px; letter-spacing: 3px;
+  color: var(--paper-red); text-transform: uppercase; margin-bottom: 6px;
+}
+.assistant-name  {
+  font-family: var(--display); font-size: 22px; color: var(--paper-ink);
+  letter-spacing: 2px;
+}
 .chat-messages {
-  flex: 1 1 auto; min-height: 0;
-  overflow-y: auto; padding: 16px;
-  display: flex; flex-direction: column; gap: 12px;
+  flex: 1 1 auto; min-height: 0; padding: 16px 18px;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+  position: relative; z-index: 1;
 }
-.chat-msg { padding: 12px 14px; font-family: var(--serif); font-size: 13px; line-height: 1.6; }
-.chat-msg.assistant { background: var(--bg3); border-left: 2px solid var(--accent2); color: var(--text); }
-.chat-msg.system    { border-left: 2px solid var(--text3); color: var(--text2); font-size: 12px; font-style: italic; }
+.chat-msg {
+  padding: 11px 14px; font-family: var(--typewriter); font-size: 13px;
+  line-height: 1.6; color: var(--paper-ink);
+}
+.chat-msg.assistant {
+  background: rgba(255,255,255,0.18);
+  border-left: 3px solid var(--paper-red);
+  color: var(--paper-ink);
+}
+.chat-msg.system {
+  border-left: 2px solid var(--paper-rust);
+  color: var(--paper-ink2); font-size: 12px; font-style: italic;
+  background: transparent;
+}
+/* Блок с подозреваемым: маленькое ID-фото + метаданные + ответ */
+.chat-msg-suspect {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.chat-suspect-card {
+  display: flex; gap: 12px; padding: 10px 12px;
+  background: rgba(0,0,0,0.08);
+  border: 1px solid var(--paper-rust);
+  align-items: center;
+}
+.chat-suspect-card svg { flex-shrink: 0; }
+.chat-suspect-meta { display: flex; flex-direction: column; gap: 2px; }
+.chat-suspect-name {
+  font-family: var(--display); font-size: 14px; letter-spacing: 1.5px;
+  color: var(--paper-ink); line-height: 1.1;
+}
+.chat-suspect-role {
+  font-family: var(--typewriter); font-size: 10.5px;
+  color: var(--paper-ink2); letter-spacing: 1px;
+}
+.chat-suspect-status {
+  font-family: var(--typewriter); font-size: 10px;
+  color: var(--paper-red); letter-spacing: 1.5px;
+  margin-top: 2px; text-transform: uppercase; font-weight: bold;
+}
+.chat-suspect-text { margin: 0 !important; }
 .chat-actions {
-  padding: 16px; border-top: 1px solid var(--border);
+  padding: 14px 18px; border-top: 2px dashed var(--paper-rust);
   flex-shrink: 0; max-height: 38%; overflow-y: auto;
+  position: relative; z-index: 1;
+  background: rgba(58,38,20,0.06);
 }
-.chat-actions-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--text3); margin-bottom: 12px; text-transform: uppercase; }
+.chat-actions-label {
+  font-family: var(--typewriter); font-size: 10px; letter-spacing: 2px;
+  color: var(--paper-red); margin-bottom: 10px; text-transform: uppercase;
+}
 .action-btn {
   display: block; width: 100%; text-align: left;
-  padding: 10px 14px; margin-bottom: 8px; background: var(--bg3);
-  border: 1px solid var(--border); color: var(--text);
-  font-family: var(--serif); font-size: 12px; cursor: pointer; transition: all .15s;
+  padding: 9px 13px; margin-bottom: 7px;
+  background: var(--paper-light); border: 1px solid var(--paper-rust);
+  color: var(--paper-ink);
+  font-family: var(--typewriter); font-size: 12px; cursor: pointer;
+  transition: all .15s;
 }
-.action-btn:hover { border-color: var(--accent2); background: rgba(200,169,110,.05); }
+.action-btn:hover { border-color: var(--paper-red); background: #f0e0b8; }
 .action-btn:last-child { margin-bottom: 0; }
 
-/* ─── NOTEBOOK (CENTER) ─── */
+/* ─── NOTEBOOK (CENTER) — оперативная доска расследования ─── */
 .notebook-panel {
   display: flex; flex-direction: column; min-height: 0;
-  background:
-    repeating-linear-gradient(transparent 0 30px, rgba(255,255,255,0.025) 30px 31px),
-    var(--bg);
-  padding: 18px 22px 14px;
-  overflow: hidden;
+  /* Тёмный «фетр» доски следователя — как пробковая/тканевая доска */
+  background-color: #2a1f17;
+  background-image:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.04), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,0.4), transparent 60%),
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 4px);
+  padding: 18px 22px 14px; overflow: hidden;
+  border-left: 1px solid var(--paper-rust); border-right: 1px solid var(--paper-rust);
+  position: relative;
 }
 .notebook-header {
   display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
-  margin-bottom: 14px;
+  margin-bottom: 16px; position: relative; z-index: 1;
 }
-.notebook-title { font-family: var(--display); font-size: 18px; color: var(--accent); letter-spacing: 3px; }
-.docs-progress  { font-family: var(--mono); font-size: 11px; color: var(--text2); letter-spacing: 1px; }
-.docs-progress.complete { color: var(--accent); }
+.notebook-title {
+  font-family: var(--display); font-size: 20px; color: #e5d6a8;
+  letter-spacing: 3px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+.docs-progress {
+  font-family: var(--typewriter); font-size: 11px; color: #c9b884;
+  letter-spacing: 1.5px; padding: 4px 10px;
+  border: 1px solid var(--paper-rust); background: rgba(0,0,0,0.25);
+}
+.docs-progress.complete { color: #6ec588; border-color: #6ec588; }
+
+/* Прогресс-бар расследования */
+.investigation-progress {
+  margin-bottom: 14px; flex-shrink: 0; position: relative; z-index: 1;
+}
+.progress-track {
+  position: relative; height: 8px;
+  background: rgba(0,0,0,0.45); border: 1px solid var(--paper-rust);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, #b8a578 0%, #c9a560 50%, #d4a04a 100%);
+  transition: width 0.4s ease;
+  box-shadow: 0 0 6px rgba(217,180,107,0.4);
+}
+.progress-marker {
+  position: absolute; top: -4px; bottom: -4px; width: 2px;
+  background: rgba(244,234,208,0.4); pointer-events: none;
+}
+.progress-legend {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  margin-top: 6px; font-family: var(--typewriter); font-size: 10px;
+  color: #c9b884; letter-spacing: 1px; flex-wrap: wrap;
+}
+.progress-legend b { color: #f4ead0; font-weight: bold; margin-left: 4px; }
+.progress-legend .prog-status {
+  margin-left: auto; color: var(--paper-red); font-weight: bold;
+  text-transform: uppercase; letter-spacing: 1.5px;
+}
 
 .suspect-columns {
   flex: 1 1 auto; min-height: 0;
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
 }
+/* Каждый столбец — лист на доске, с уголками и канцелярскими кнопками */
 .suspect-col {
   display: flex; flex-direction: column; min-height: 0;
-  background: var(--bg2); border: 1px solid var(--border);
-  transition: border-color 0.15s, background 0.15s;
+  background-color: var(--paper);
+  background-image: linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+  color: var(--paper-ink);
+  border: 1px solid var(--paper-rust);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  position: relative;
 }
-.suspect-col.over { border-color: var(--accent); background: rgba(217,180,107,0.04); }
+/* Канцелярские кнопки в углах столбца */
+.suspect-col::before, .suspect-col::after {
+  content: ''; position: absolute; top: -5px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #e74c4c, #8b2c2c);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+  z-index: 2;
+}
+.suspect-col::before { left: 10px; }
+.suspect-col::after  { right: 10px; }
+.suspect-col.over {
+  border-color: var(--paper-red); transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.55);
+}
 .suspect-col-head {
-  padding: 10px 12px; border-bottom: 1px solid var(--border);
-  font-family: var(--display); font-size: 13px; color: var(--text); letter-spacing: 1px;
-  text-align: center; flex-shrink: 0;
+  padding: 14px 12px 10px; border-bottom: 2px dashed var(--paper-rust);
+  font-family: var(--display); font-size: 15px; color: var(--paper-ink);
+  letter-spacing: 1.5px; text-align: center; flex-shrink: 0;
 }
-.suspect-col-count { font-family: var(--mono); font-size: 10px; color: var(--accent2); margin-top: 2px; letter-spacing: 1px; }
+.suspect-col-count {
+  font-family: var(--typewriter); font-size: 10px; color: var(--paper-red);
+  margin-top: 3px; letter-spacing: 1px;
+}
 .suspect-col-zone {
-  flex: 1 1 auto; min-height: 60px; padding: 10px;
-  display: flex; flex-direction: column; gap: 6px; overflow-y: auto;
+  flex: 1 1 auto; min-height: 60px; padding: 12px;
+  display: flex; flex-direction: column; gap: 8px; overflow-y: auto;
 }
 .suspect-col-zone:empty::before {
-  content: 'перетащи улику'; font-family: var(--mono); font-size: 10px;
-  color: var(--text3); letter-spacing: 1px; text-align: center; margin: auto;
+  content: 'перетащи фрагмент'; font-family: var(--typewriter); font-size: 10px;
+  color: var(--paper-ink2); letter-spacing: 1px; text-align: center; margin: auto;
+  opacity: 0.6;
 }
 .suspect-col-foot {
-  padding: 8px 10px; border-top: 1px solid var(--border); flex-shrink: 0;
+  padding: 9px 10px; border-top: 1px solid var(--paper-rust);
+  background: rgba(58,38,20,0.06); flex-shrink: 0;
 }
 .btn-col-accuse {
-  width: 100%; padding: 8px; background: var(--red); color: #fff; border: none;
-  font-family: var(--mono); font-size: 10px; letter-spacing: 1px; cursor: pointer; text-transform: uppercase;
+  width: 100%; padding: 9px; background: var(--paper-red); color: #f4ead0;
+  border: 1px solid #5a1818;
+  font-family: var(--typewriter); font-weight: bold;
+  font-size: 11px; letter-spacing: 2px; cursor: pointer; text-transform: uppercase;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
 }
-.btn-col-accuse:hover:not(:disabled) { background: #d94f4f; }
-.btn-col-accuse:disabled { background: #3a2222; color: #777; cursor: not-allowed; opacity: 0.6; }
+.btn-col-accuse:hover:not(:disabled) { background: #a83838; }
+.btn-col-accuse:disabled {
+  background: #5a4040; color: #b8a890; cursor: not-allowed; opacity: 0.55;
+  border-color: #3a2020;
+}
 
-.notebook-hint { font-family: var(--serif); font-size: 11px; color: var(--text3); font-style: italic; margin-top: 10px; line-height: 1.5; flex-shrink: 0; }
+.notebook-hint {
+  font-family: var(--typewriter); font-size: 11px; color: #c9b884;
+  font-style: italic; margin-top: 12px; line-height: 1.5; flex-shrink: 0;
+  position: relative; z-index: 1;
+}
 
-/* ─── DOCS LIST (RIGHT) ─── */
+/* ─── DOCS LIST (RIGHT) — стопка папок ─── */
 .docs-panel {
-  border-left: 1px solid var(--border); background: var(--bg2);
   display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse at top right, rgba(0,0,0,0) 60%, rgba(58,38,20,0.18) 100%),
+    linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+  border-left: 1px solid var(--paper-rust); color: var(--paper-ink);
+  position: relative;
+}
+.docs-panel::before {
+  /* зернистость */
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.25; mix-blend-mode: multiply; z-index: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.10  0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 .docs-panel-title {
-  padding: 14px 16px; font-family: var(--mono); font-size: 10px; letter-spacing: 3px;
-  color: var(--accent2); border-bottom: 1px solid var(--border); text-transform: uppercase;
-  flex-shrink: 0;
+  padding: 16px 16px 14px;
+  font-family: var(--typewriter); font-size: 11px; letter-spacing: 3px;
+  color: var(--paper-red); border-bottom: 2px dashed var(--paper-rust);
+  text-transform: uppercase; flex-shrink: 0;
+  position: relative; z-index: 1;
+  background: rgba(58,38,20,0.06);
 }
-#docs-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+#docs-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; position: relative; z-index: 1; }
+/* Корешки категорий — цветные ярлычки папок */
 .docs-cat-label {
-  padding: 12px 16px 6px; font-family: var(--mono); font-size: 9px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase;
+  padding: 12px 16px 6px; font-family: var(--typewriter); font-size: 10px;
+  letter-spacing: 2.5px; color: #f4ead0; text-transform: uppercase;
+  background: var(--paper-rust); margin: 8px 0 4px;
+  border-top: 1px solid var(--paper-ink); border-bottom: 1px solid rgba(0,0,0,0.3);
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.15);
 }
+.docs-cat-label:first-child { margin-top: 0; }
+/* Строка документа — стилизована под папку-карточку */
 .doc-row {
   display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px; cursor: pointer; user-select: none;
-  transition: background .15s; border-left: 2px solid transparent;
+  margin: 6px 10px;
+  padding: 9px 12px;
+  cursor: pointer; user-select: none;
+  background: var(--paper-light);
+  border: 1px solid rgba(139,90,59,0.4);
+  border-left: 3px solid var(--paper-rust);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06), 1px 1px 2px rgba(0,0,0,0.12);
+  transition: transform .15s, border-color .15s, box-shadow .15s, background .15s;
+  position: relative;
 }
-.doc-row:hover { background: rgba(200,169,110,.05); }
-.doc-row.opened { border-left-color: var(--accent); background: rgba(200,169,110,.04); }
-.doc-row.active { background: rgba(200,169,110,.12); border-left-color: var(--accent); }
-.doc-row-icon { font-size: 14px; flex-shrink: 0; }
-.doc-row-name { font-family: var(--serif); font-size: 12px; color: var(--text); line-height: 1.3; flex: 1; }
-.doc-row-check { color: var(--green); font-size: 12px; }
+.doc-row:hover {
+  background: #f0e0b8; border-left-color: var(--paper-red);
+  transform: translateX(2px);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.08), 2px 2px 4px rgba(0,0,0,0.18);
+}
+.doc-row.opened {
+  border-left-color: var(--paper-red);
+  background: linear-gradient(90deg, rgba(139,44,44,0.06) 0%, var(--paper-light) 100%);
+}
+/* Документ открыт, но в нём ещё есть нерасставленные улики */
+.doc-row.opened.has-unplaced {
+  animation: doc-pulse 2s ease-in-out infinite;
+  border-left-color: #c9a560;
+}
+@keyframes doc-pulse {
+  0%, 100% { box-shadow: 0 1px 0 rgba(0,0,0,0.06), 1px 1px 2px rgba(0,0,0,0.12); }
+  50%      { box-shadow: 0 0 0 1px #c9a560, 0 0 14px rgba(201,165,96,0.45); }
+}
+.doc-row.opened.has-unplaced .doc-row-name::after {
+  content: ' ●'; color: #c9a560; font-weight: bold;
+}
+.doc-row.active {
+  background: linear-gradient(90deg, rgba(139,44,44,0.14) 0%, var(--paper-light) 100%);
+  border-left-color: var(--paper-red); border-left-width: 4px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.08), 3px 3px 6px rgba(0,0,0,0.25);
+  transform: translateX(2px);
+}
+.doc-row-icon {
+  font-size: 13px; flex-shrink: 0;
+  filter: sepia(0.5) saturate(0.8);
+}
+.doc-row-name {
+  font-family: var(--typewriter); font-size: 12px; color: var(--paper-ink);
+  line-height: 1.35; flex: 1;
+}
+.doc-row.opened .doc-row-name {
+  color: var(--paper-ink2);
+  text-decoration-line: line-through; text-decoration-color: rgba(58,38,20,0.25);
+  text-decoration-thickness: 1px;
+}
+.doc-row-check {
+  color: var(--paper-red); font-size: 14px; font-weight: bold;
+  font-family: var(--typewriter);
+}
 
-/* ─── DOC OVERLAY (открывается поверх блокнота) ─── */
+/* ═══ DOC OVERLAY — «ПАПКА ДЕЛА» (бумага, машинопись, штамп) ════ */
 .doc-overlay {
   position: fixed; inset: 0;
-  background: rgba(5,7,10,0.78);
+  background: rgba(5,7,10,0.85);
   display: none; align-items: center; justify-content: center; z-index: 150;
   padding: 30px; opacity: 0; transition: opacity 0.2s;
 }
 .doc-overlay.show { display: flex; opacity: 1; }
 .doc-overlay.dim { opacity: 0; pointer-events: none; } /* временно прячем при drag */
+
+/* Бумажная карточка документа */
 .doc-overlay-card {
-  background: var(--bg2); border: 1px solid var(--accent2);
-  max-width: 760px; width: 100%; max-height: calc(100vh - 60px);
+  position: relative;
+  width: 100%; max-width: 780px; max-height: calc(100vh - 60px);
   display: flex; flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  color: var(--paper-ink);
+
+  /* Базовая бумага: тёплый тон + лёгкая зернистость через градиенты */
+  background-color: var(--paper);
+  background-image:
+    /* Тёмные углы — лёгкая виньетка */
+    radial-gradient(ellipse at top left,    rgba(0,0,0,0.18), transparent 55%),
+    radial-gradient(ellipse at bottom right, rgba(0,0,0,0.18), transparent 55%),
+    /* Цветовая «выцветшая» гамма */
+    linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 35%, var(--paper-dark) 100%);
+  border: 1px solid var(--paper-rust);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.75),
+    inset 0 0 80px rgba(58,38,20,0.18);
 }
+
+/* Зернистость поверх бумаги (SVG-шум, не требует файлов) */
+.doc-overlay-card::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.35; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.10  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Боковая вертикальная плашка-ярлык категории — как в референсе TaskForce-141 */
+.doc-overlay-card::after {
+  content: attr(data-side-label);
+  position: absolute; top: 24px; bottom: 24px; right: -14px;
+  width: 28px;
+  display: flex; align-items: center; justify-content: center;
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font-family: var(--typewriter); font-weight: bold;
+  font-size: 14px; letter-spacing: 6px;
+  color: #f4ead0; background: var(--paper-red);
+  border: 1px solid var(--paper-ink);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.08);
+  text-transform: uppercase;
+}
+
+/* Шапка папки в стиле TaskForce-141 дос-карточки */
 .doc-overlay-head {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  padding: 20px 24px 14px; border-bottom: 1px solid var(--border);
+  position: relative; z-index: 2;
+  padding: 14px 38px 12px 24px;
+  border-bottom: 1px solid var(--paper-rust);
   flex-shrink: 0;
 }
-.doc-overlay-cat { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px; }
-.doc-overlay-title { font-family: var(--display); font-size: 22px; color: var(--accent); letter-spacing: 1px; line-height: 1.2; }
-.doc-overlay-close {
-  background: transparent; border: 1px solid var(--border); color: var(--text2);
-  width: 36px; height: 36px; font-size: 18px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+
+/* ORGANIZATION/UNIT: ... [▓▓▓▓▓▓] */
+.doc-overlay-orgunit {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-family: var(--typewriter); font-size: 10px;
+  color: var(--paper-ink); letter-spacing: 1px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(58,38,20,0.3);
+  margin-bottom: 6px;
 }
-.doc-overlay-close:hover { color: var(--accent); border-color: var(--accent); }
+.doc-org-key { color: var(--paper-ink2); font-weight: bold; }
+.doc-org-val { color: var(--paper-ink); }
+.doc-org-redacted {
+  background: var(--paper-ink); color: var(--paper-ink);
+  letter-spacing: 2px; padding: 0 6px; user-select: none;
+}
+
+/* CLASSIFICATION плашка */
+.doc-overlay-classification {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--typewriter); font-size: 11px;
+  padding: 6px 0; margin-bottom: 6px;
+  border-bottom: 1px solid rgba(58,38,20,0.3);
+}
+.doc-class-key {
+  color: var(--paper-ink2); font-weight: bold; letter-spacing: 1px;
+}
+.doc-class-val {
+  color: var(--paper-red); font-weight: bold;
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+
+/* DOSSIER № | STATUS */
+.doc-overlay-meta {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  font-family: var(--typewriter); font-size: 10px;
+  color: var(--paper-ink); margin-bottom: 10px; letter-spacing: 1px;
+}
+.doc-overlay-meta .meta-key { color: var(--paper-ink2); font-weight: bold; }
+.doc-overlay-meta .meta-sep { color: var(--paper-rust); }
+.doc-overlay-meta b { color: var(--paper-red); font-weight: bold; letter-spacing: 1.5px; }
+
+.doc-overlay-cat {
+  font-family: var(--typewriter); font-size: 10px;
+  color: var(--paper-red); letter-spacing: 3px; margin-bottom: 4px; text-transform: uppercase;
+}
+.doc-overlay-title {
+  font-family: var(--display); font-size: 26px; color: var(--paper-ink);
+  letter-spacing: 1px; line-height: 1.15;
+}
+
+.doc-overlay-close {
+  position: absolute; top: 18px; right: 18px;
+  background: transparent; border: 1px solid var(--paper-rust);
+  color: var(--paper-ink2); width: 34px; height: 34px; font-size: 18px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-family: var(--typewriter); z-index: 3;
+}
+.doc-overlay-close:hover { color: var(--paper-red); border-color: var(--paper-red); }
+
+/* Тело документа */
 .doc-overlay-body {
+  position: relative; z-index: 2;
   flex: 1 1 auto; min-height: 0;
-  overflow-y: auto; padding: 20px 24px 24px;
+  overflow-y: auto; padding: 20px 36px 28px 28px;
 }
 .doc-overlay-text {
-  font-family: var(--serif); font-size: 13.5px; line-height: 1.75; color: var(--text);
-  white-space: pre-wrap;
+  font-family: var(--typewriter); font-size: 15.5px; line-height: 1.95;
+  color: var(--paper-ink); white-space: pre-wrap;
+  letter-spacing: 0.2px;
 }
+
+/* ═══ DOSSIER LAYOUT (структурные блоки как в TaskForce-141) ═══ */
+.layout-dossier .doc-overlay-text { white-space: normal; }
+.dossier-grid {
+  display: grid; grid-template-columns: 200px 1fr; gap: 22px;
+}
+.dossier-photo {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.dossier-photo-cap {
+  font-family: var(--typewriter); font-size: 10px; letter-spacing: 2px;
+  color: var(--paper-ink2); text-transform: uppercase;
+  padding-bottom: 4px; border-bottom: 1px solid var(--paper-ink2);
+  width: 100%; text-align: center;
+}
+.suspect-avatar-svg {
+  border: 2px solid var(--paper-ink); box-shadow: 3px 3px 0 rgba(0,0,0,0.25);
+  display: block;
+}
+.dossier-photo-label {
+  font-family: var(--typewriter); font-size: 9px;
+  letter-spacing: 1.5px; color: var(--paper-ink2); text-align: center;
+  line-height: 1.3; max-width: 180px;
+}
+
+/* Заголовок секции с горизонтальными линиями по бокам — как в референсе */
+.dossier-section { margin-bottom: 16px; }
+.dossier-section-title {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--typewriter); font-weight: bold;
+  font-size: 11px; letter-spacing: 3px; color: var(--paper-ink);
+  text-transform: uppercase; margin: 0 0 8px;
+}
+.dossier-section-title::before,
+.dossier-section-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--paper-ink);
+}
+.dossier-section-title::before { max-width: 18px; }
+
+/* Подзаголовок (Биография:, Конфликт:, Финансы:) */
+.dossier-subhead {
+  font-family: var(--typewriter); font-weight: bold;
+  font-size: 12px; color: var(--paper-ink); margin: 10px 0 4px;
+  letter-spacing: 0.5px;
+}
+
+/* Списки с тире */
+.dossier-list { list-style: none; margin: 0; padding: 0; }
+.dossier-list li {
+  font-family: var(--typewriter); font-size: 13.5px; line-height: 1.7;
+  color: var(--paper-ink); padding-left: 16px; position: relative;
+  margin-bottom: 6px;
+  letter-spacing: 0.15px;
+}
+.dossier-list li::before {
+  content: '—'; position: absolute; left: 0; top: 0;
+  color: var(--paper-ink2); font-weight: bold;
+}
+
+/* Параграф */
+.dossier-para {
+  font-family: var(--typewriter); font-size: 13.5px; line-height: 1.75;
+  color: var(--paper-ink); margin-bottom: 8px;
+  letter-spacing: 0.15px;
+}
+
+/* Краткая «карточка» PERSONAL DATA — компактный список под фото */
+.dossier-mini {
+  border: 1.5px solid var(--paper-ink); padding: 10px 14px;
+  background: rgba(58,38,20,0.05);
+}
+.dossier-row {
+  display: flex; gap: 6px; font-family: var(--typewriter); font-size: 11.5px;
+  padding: 4px 0; border-bottom: 1px dotted rgba(58,38,20,0.25);
+  align-items: baseline;
+}
+.dossier-row:last-child { border-bottom: none; }
+.dossier-row span {
+  color: var(--paper-ink2); letter-spacing: 0.5px;
+  min-width: 78px; font-weight: bold; text-transform: uppercase; font-size: 10px;
+}
+.dossier-row b { color: var(--paper-ink); font-weight: normal; font-size: 12px; }
+.dossier-row b.status-red { color: var(--paper-red); font-weight: bold; letter-spacing: 1px; font-size: 11px; }
+
+/* Примечание агентства — отдельная плашка с угловыми скобками */
+.dossier-note {
+  margin-top: 16px; padding: 12px 14px;
+  background: rgba(139,44,44,0.08);
+  border: 1.5px solid var(--paper-red);
+  font-family: var(--typewriter); font-size: 12px; line-height: 1.6;
+  color: var(--paper-ink);
+}
+.dossier-note-title {
+  font-weight: bold; color: var(--paper-red);
+  letter-spacing: 2px; margin-bottom: 6px;
+  font-size: 11px; text-transform: uppercase;
+}
+
+/* Блок с фрагментами — отрезан перфорацией */
 .doc-overlay-evidences {
-  margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--border2);
+  margin-top: 26px; padding-top: 18px;
+  border-top: 2px dashed var(--paper-rust);
   display: flex; flex-direction: column; gap: 8px;
 }
-.doc-overlay-evidences-label { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 2px; margin-bottom: 6px; text-transform: uppercase; }
-
-/* ─── EVIDENCE CARDS (общие, и в документе, и в столбцах) ─── */
-.evidence-card {
-  padding: 9px 11px; border: 1px solid var(--border); background: var(--bg3);
-  cursor: grab; user-select: none; touch-action: none;
-  position: relative; transition: border-color 0.15s, transform 0.15s, background 0.15s;
+.doc-overlay-evidences-label {
+  font-family: var(--typewriter); font-size: 11px; color: var(--paper-red);
+  letter-spacing: 2.5px; margin-bottom: 8px; text-transform: uppercase;
 }
-.evidence-card:hover { border-color: var(--accent); }
+
+/* Штамп «ИЗУЧЕНО» в правом верхнем углу для уже открытых */
+.doc-overlay-card.opened-stamp .doc-overlay-head::before {
+  content: 'ИЗУЧЕНО';
+  position: absolute; top: 16px; right: 64px;
+  font-family: var(--typewriter); font-size: 18px; letter-spacing: 4px;
+  color: var(--paper-red); border: 2px solid var(--paper-red);
+  padding: 4px 12px; transform: rotate(-8deg); opacity: 0.7;
+  z-index: 3;
+}
+
+/* ─── EVIDENCE CARDS (бумажные карточки-фрагменты) ─── */
+.evidence-card {
+  padding: 10px 12px; border: 1px solid var(--paper-rust);
+  background: var(--paper-light);
+  color: var(--paper-ink);
+  cursor: grab; user-select: none; touch-action: none;
+  position: relative; transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.15);
+}
+.evidence-card:hover { border-color: var(--paper-red); box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
 .evidence-card.dragging { opacity: 0.4; }
 .evidence-card.ghost {
   position: fixed; pointer-events: none; z-index: 300; max-width: 280px;
-  background: var(--bg3); border-color: var(--accent); box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  transform: rotate(-2deg);
+  background: var(--paper-light); border-color: var(--paper-red);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.6);
+  transform: rotate(-3deg);
 }
-.evidence-card-text { font-family: var(--serif); font-size: 12px; color: var(--text); line-height: 1.35; }
-.evidence-card.in-column { background: rgba(217,180,107,0.06); border-color: var(--accent); cursor: pointer; }
+.evidence-card-text { font-family: var(--typewriter); font-size: 12.5px; color: var(--paper-ink); line-height: 1.4; }
+/* В столбце блокнота — карточки немного «приколоты», темнее */
+.evidence-card.in-column { background: var(--paper); border-color: var(--paper-red); cursor: pointer; }
+.evidence-card.in-column::before {
+  /* «канцелярская кнопка» сверху */
+  content: ''; position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--paper-red);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
 .evidence-card.in-column .evidence-card-text { font-size: 11.5px; }
-.evidence-card.placed { opacity: 0.4; cursor: default; }
-.evidence-card.placed:hover { border-color: var(--border); }
+.evidence-card.placed { opacity: 0.35; cursor: default; }
+.evidence-card.placed:hover { border-color: var(--paper-rust); box-shadow: none; }
 
 /* PAYWALL */
+/* INTRO — карточка приветствия куратора (показывается при первом входе в дело) */
+.intro-overlay {
+  position: fixed; inset: 0; background: rgba(5,7,10,0.88);
+  display: none; align-items: center; justify-content: center; z-index: 190;
+  padding: 30px;
+}
+.intro-overlay.show { display: flex; }
+.intro-card {
+  background-color: var(--paper);
+  background-image: linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+  border: 1px solid var(--paper-rust);
+  max-width: 580px; width: 100%; padding: 28px 30px;
+  color: var(--paper-ink);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  position: relative;
+}
+/* плашка убрана по запросу */
+.intro-curator {
+  display: flex; gap: 16px; align-items: center;
+  padding-bottom: 14px; margin-bottom: 16px;
+  border-bottom: 2px dashed var(--paper-rust);
+}
+.intro-curator-photo {
+  width: 64px; height: 64px;
+  border-radius: 50%; overflow: hidden;
+  border: 2px solid var(--paper-ink); flex-shrink: 0;
+  background: var(--paper-rust);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 28px; color: #f4ead0;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+}
+.intro-curator-role {
+  font-family: var(--typewriter); font-size: 10px; color: var(--paper-red);
+  letter-spacing: 2px; margin-bottom: 4px; text-transform: uppercase;
+}
+.intro-curator-name {
+  font-family: var(--display); font-size: 22px; color: var(--paper-ink);
+  letter-spacing: 2px;
+}
+.intro-text {
+  font-family: var(--typewriter); font-size: 14px; line-height: 1.85;
+  color: var(--paper-ink); margin-bottom: 22px;
+  letter-spacing: 0.2px;
+}
+.intro-text b { color: var(--paper-red); font-weight: bold; }
+.intro-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-intro-primary, .btn-intro-secondary {
+  flex: 1; padding: 12px 18px;
+  font-family: var(--typewriter); font-weight: bold;
+  font-size: 12px; letter-spacing: 1.5px; cursor: pointer;
+  text-transform: uppercase;
+}
+.btn-intro-primary {
+  background: var(--paper-red); color: #f4ead0;
+  border: 1px solid #5a1818;
+}
+.btn-intro-primary:hover { background: #a83838; }
+.btn-intro-secondary {
+  background: transparent; color: var(--paper-ink);
+  border: 1px solid var(--paper-ink);
+}
+.btn-intro-secondary:hover { color: var(--paper-red); border-color: var(--paper-red); }
+
+/* HINT — есть нерасставленные улики */
+.hint-overlay {
+  position: fixed; inset: 0; background: rgba(5,7,10,0.78);
+  display: none; align-items: center; justify-content: center; z-index: 180;
+  padding: 30px;
+}
+.hint-overlay.show { display: flex; }
+.hint-card {
+  background-color: var(--paper);
+  background-image: linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+  border: 2px solid #c9a560;
+  max-width: 520px; width: 100%; padding: 32px 30px;
+  color: var(--paper-ink); text-align: center;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+}
+.hint-icon { font-size: 40px; margin-bottom: 10px; }
+.hint-title {
+  font-family: var(--display); font-size: 24px; color: var(--paper-ink);
+  letter-spacing: 2px; margin-bottom: 14px;
+}
+.hint-text {
+  font-family: var(--typewriter); font-size: 13.5px; color: var(--paper-ink);
+  line-height: 1.7; margin-bottom: 16px;
+}
+.hint-text b { color: var(--paper-red); }
+.hint-docs {
+  text-align: left; list-style: none; padding: 0;
+  margin: 0 0 22px; max-height: 200px; overflow-y: auto;
+}
+.hint-docs li {
+  font-family: var(--typewriter); font-size: 12.5px; color: var(--paper-ink);
+  padding: 8px 12px; border-left: 3px solid #c9a560;
+  background: rgba(201,165,96,0.1); margin-bottom: 6px;
+}
+.hint-actions { display: flex; gap: 12px; justify-content: center; }
+.btn-hint-primary {
+  padding: 11px 20px; background: var(--paper-red); color: #f4ead0;
+  border: 1px solid #5a1818; font-family: var(--typewriter);
+  font-weight: bold; font-size: 12px; letter-spacing: 1.5px;
+  cursor: pointer; text-transform: uppercase;
+}
+.btn-hint-primary:hover { background: #a83838; }
+.btn-hint-ghost {
+  padding: 11px 20px; background: transparent; color: var(--paper-ink2);
+  border: 1px solid var(--paper-ink2); font-family: var(--typewriter);
+  font-size: 11px; letter-spacing: 1px; cursor: pointer; text-transform: uppercase;
+}
+.btn-hint-ghost:hover { color: var(--paper-red); border-color: var(--paper-red); }
+
 .paywall-overlay {
   position: fixed; inset: 0; background: rgba(10,12,15,.92);
   display: none; align-items: center; justify-content: center; z-index: 100;
@@ -412,6 +1177,53 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .epilogue-answer b { color: var(--red); }
 .epilogue-section { margin-bottom: 36px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
 .epilogue-section:last-child { border-bottom: none; }
+
+/* ─── ЭПИЛОГ-СЛАЙДЫ ─── */
+.epilogue-topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px;
+}
+.epilogue-slide-counter {
+  font-family: var(--typewriter); font-size: 11px; color: var(--accent);
+  letter-spacing: 2px; padding: 4px 12px;
+  border: 1px solid var(--accent2);
+}
+.epilogue-slide-counter span { font-weight: bold; color: var(--accent); }
+.epilogue-slide-counter span:first-child { font-size: 14px; }
+
+.epilogue-slides { position: relative; min-height: 320px; }
+.ep-slide {
+  display: none;
+  animation: ep-fade .3s ease;
+}
+.ep-slide.active { display: block; }
+@keyframes ep-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.epilogue-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-top: 30px; padding-top: 20px;
+  border-top: 1px dashed var(--border2);
+}
+.ep-nav-btn {
+  padding: 10px 22px; background: transparent; color: var(--accent);
+  border: 1px solid var(--accent); font-family: var(--mono); font-size: 12px;
+  letter-spacing: 2px; cursor: pointer; text-transform: uppercase;
+  transition: all .15s;
+}
+.ep-nav-btn:hover:not(:disabled) { background: var(--accent); color: var(--bg); }
+.ep-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.ep-nav-dots { display: flex; gap: 8px; }
+.ep-nav-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: transparent; border: 1px solid var(--accent2);
+  cursor: pointer; transition: all .15s;
+}
+.ep-nav-dot:hover { border-color: var(--accent); }
+.ep-nav-dot.active { background: var(--accent); border-color: var(--accent); }
+.ep-nav-dot.done   { background: var(--accent2); }
 .epilogue-h { font-family: var(--display); font-size: 18px; color: var(--accent); letter-spacing: 2px; margin-bottom: 16px; font-weight: normal; }
 .epilogue-story { font-family: var(--serif); font-size: 15px; color: var(--text); line-height: 1.8; white-space: pre-wrap; }
 .epilogue-list { list-style: none; padding: 0; }
@@ -488,6 +1300,109 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 
 .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══ СКРОЛЛБАРЫ в бумажном стиле ═══ */
+/* Бумажные панели — тёплый скроллбар */
+.doc-overlay-body, .doc-overlay-text,
+.docs-panel, #docs-list,
+.assistant-panel, .chat-messages, .chat-actions,
+.dossier-text,
+.suspect-col-zone {
+  scrollbar-width: thin;
+  scrollbar-color: var(--paper-rust) transparent;
+}
+.doc-overlay-body::-webkit-scrollbar,
+.doc-overlay-text::-webkit-scrollbar,
+.docs-panel::-webkit-scrollbar,
+#docs-list::-webkit-scrollbar,
+.assistant-panel::-webkit-scrollbar,
+.chat-messages::-webkit-scrollbar,
+.chat-actions::-webkit-scrollbar,
+.dossier-text::-webkit-scrollbar,
+.suspect-col-zone::-webkit-scrollbar { width: 10px; height: 10px; }
+.doc-overlay-body::-webkit-scrollbar-track,
+.doc-overlay-text::-webkit-scrollbar-track,
+.docs-panel::-webkit-scrollbar-track,
+#docs-list::-webkit-scrollbar-track,
+.assistant-panel::-webkit-scrollbar-track,
+.chat-messages::-webkit-scrollbar-track,
+.chat-actions::-webkit-scrollbar-track,
+.dossier-text::-webkit-scrollbar-track,
+.suspect-col-zone::-webkit-scrollbar-track {
+  background: rgba(58,38,20,0.08);
+  border-left: 1px solid rgba(58,38,20,0.18);
+}
+.doc-overlay-body::-webkit-scrollbar-thumb,
+.doc-overlay-text::-webkit-scrollbar-thumb,
+.docs-panel::-webkit-scrollbar-thumb,
+#docs-list::-webkit-scrollbar-thumb,
+.assistant-panel::-webkit-scrollbar-thumb,
+.chat-messages::-webkit-scrollbar-thumb,
+.chat-actions::-webkit-scrollbar-thumb,
+.dossier-text::-webkit-scrollbar-thumb,
+.suspect-col-zone::-webkit-scrollbar-thumb {
+  background: var(--paper-rust);
+  border: 2px solid rgba(58,38,20,0.15);
+  background-clip: padding-box;
+}
+.doc-overlay-body::-webkit-scrollbar-thumb:hover,
+.docs-panel::-webkit-scrollbar-thumb:hover,
+.chat-messages::-webkit-scrollbar-thumb:hover { background: var(--paper-red); background-clip: padding-box; }
+
+/* Глобальный скроллбар для остального (тёмные блоки) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+::-webkit-scrollbar-thumb { background: var(--paper-rust); border: 2px solid rgba(0,0,0,0.2); background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--paper-red); background-clip: padding-box; }
+* { scrollbar-color: var(--paper-rust) rgba(0,0,0,0.3); scrollbar-width: thin; }
+
+/* ─── TUTORIAL ──────────────────────────────────────────────────── */
+#tut-overlay { display: none; }
+#tut-overlay.show { display: block; }
+#tut-dim {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.74);
+  z-index: 8799; pointer-events: all;
+}
+#tut-spotlight {
+  display: none; position: fixed; border-radius: 6px;
+  box-shadow: 0 0 0 5000px rgba(0,0,0,0.74);
+  border: 2px solid rgba(200,169,110,0.6);
+  pointer-events: none; z-index: 8800;
+  transition: top .32s ease, left .32s ease, width .32s ease, height .32s ease;
+}
+#tut-spotlight.visible { display: block; }
+#tut-card {
+  position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
+  z-index: 8900; background: var(--bg2); border: 1px solid var(--accent2);
+  padding: 28px 32px; max-width: 500px; width: calc(100vw - 32px);
+  box-shadow: 0 8px 48px rgba(0,0,0,0.75);
+}
+.tut-step { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 3px; margin-bottom: 10px; }
+.tut-title { font-family: var(--display); font-size: 26px; color: var(--accent); letter-spacing: 1px; margin-bottom: 12px; }
+.tut-text { font-family: var(--serif); font-size: 14px; color: var(--text2); line-height: 1.75; margin-bottom: 22px; white-space: pre-line; }
+.tut-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.tut-skip { font-family: var(--mono); font-size: 11px; color: var(--text3); cursor: pointer; background: none; border: none; letter-spacing: 1px; padding: 0; flex-shrink: 0; }
+.tut-skip:hover { color: var(--text2); }
+.tut-dots { display: flex; gap: 7px; flex: 1; justify-content: center; }
+.tut-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); cursor: pointer; transition: background .2s; flex-shrink: 0; }
+.tut-dot.active { background: var(--accent); }
+.tut-dot.done { background: var(--accent2); }
+.tut-next { font-family: var(--mono); font-size: 12px; letter-spacing: 2px; padding: 10px 22px; background: var(--accent); color: var(--bg); border: none; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
+.tut-next:hover { background: #dfc07e; }
+.btn-tutorial {
+  width: 28px; height: 28px; border-radius: 50%; background: none;
+  border: 1px solid var(--border2); color: var(--text3);
+  font-family: var(--mono); font-size: 13px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-left: 10px; flex-shrink: 0; transition: border-color .2s, color .2s;
+  vertical-align: middle;
+}
+.btn-tutorial:hover { border-color: var(--accent2); color: var(--text); }
+@media (max-width: 767px) {
+  #tut-spotlight { display: none !important; }
+  #tut-card { bottom: 16px; padding: 20px 18px; }
+  .tut-title { font-size: 22px; }
+}
 </style>
 </head>
 <body>
@@ -630,9 +1545,13 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 <!-- ═══ GAME ═══════════════════════════════════════════════════════ -->
 <div id="screen-game" class="screen">
   <div class="game-header">
-    <button class="game-back" onclick="showScreen('cabinet')">← Кабинет</button>
-    <div class="game-title" id="game-title">ДЕЛО №001</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--text3)" id="game-paid-status"></div>
+    <button class="game-back" onclick="backToCabinet()">← Кабинет</button>
+    <div class="game-title-wrap">
+      <div class="game-title" id="game-title">ДЕЛО №001</div>
+      <div class="game-title-sub">архивное · следствие закрыто · агентство возобновило</div>
+    </div>
+    <div id="game-paid-status"></div>
+    <button class="btn-tutorial" onclick="startTutorial()" title="Инструкция по игре">?</button>
   </div>
   <!-- Mobile tabs -->
   <div class="mobile-tabs">
@@ -645,7 +1564,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
     <!-- LEFT — ASSISTANT -->
     <aside class="assistant-panel" id="assistant-panel">
       <div class="assistant-header">
-        <div class="assistant-title">▸ Помощник</div>
+        <div class="assistant-title">▸ Куратор расследования</div>
         <div class="assistant-name">Агент Соколов</div>
       </div>
       <div class="chat-messages" id="chat-messages">
@@ -663,6 +1582,17 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
         <div class="notebook-title">▸ Блокнот расследования</div>
         <div class="docs-progress" id="docs-progress">Изучено документов: 0 / 0</div>
       </div>
+      <div class="investigation-progress" id="investigation-progress">
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+          <div class="progress-marker" style="left:50%"></div>
+        </div>
+        <div class="progress-legend">
+          <span>📁 МАТЕРИАЛЫ <b id="prog-docs">0 / 0</b></span>
+          <span>📌 УЛИКИ В БЛОКНОТЕ <b id="prog-evs">0 / 0</b></span>
+          <span class="prog-status" id="prog-status">Расследование начато</span>
+        </div>
+      </div>
       <div class="suspect-columns" id="suspect-columns"><!-- генерится JS --></div>
       <div class="notebook-hint" id="notebook-hint">
         Открой документ справа → реши, на кого указывает фрагмент → перетащи в столбец.
@@ -678,15 +1608,33 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 
   </div>
 
-  <!-- DOC OVERLAY — открывается поверх блокнота -->
+  <!-- DOC OVERLAY — открывается поверх блокнота, оформление «папка дела» -->
   <div class="doc-overlay" id="doc-overlay">
-    <div class="doc-overlay-card" id="doc-overlay-card">
+    <div class="doc-overlay-card" id="doc-overlay-card" data-side-label="ДОСЬЕ">
+      <button class="doc-overlay-close" onclick="closeDocOverlay()">×</button>
       <div class="doc-overlay-head">
-        <div>
-          <div class="doc-overlay-cat" id="doc-overlay-cat"></div>
-          <div class="doc-overlay-title" id="doc-overlay-title"></div>
+        <!-- ─ ORG / UNIT строка с зацензуренной частью ─ -->
+        <div class="doc-overlay-orgunit">
+          <span class="doc-org-key">ОРГАНИЗАЦИЯ/ОТДЕЛ:</span>
+          <span class="doc-org-val">Частное следственное агентство —</span>
+          <span class="doc-org-redacted">▓▓▓▓▓▓</span>
         </div>
-        <button class="doc-overlay-close" onclick="closeDocOverlay()">×</button>
+        <!-- ─ CLASSIFICATION строка (главная плашка) ─ -->
+        <div class="doc-overlay-classification">
+          <span class="doc-class-key">ГРИФ:</span>
+          <span class="doc-class-val">КОНФИДЕНЦИАЛЬНО — ТОЛЬКО ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ</span>
+        </div>
+        <!-- ─ DOSSIER № | STATUS ─ -->
+        <div class="doc-overlay-meta" id="doc-overlay-meta">
+          <span><span class="meta-key">ДЕЛО №:</span> <b id="doc-overlay-case-no">001-Ф</b></span>
+          <span class="meta-sep">|</span>
+          <span><span class="meta-key">ДОК. №:</span> <b id="doc-overlay-doc-no">—</b></span>
+          <span class="meta-sep">|</span>
+          <span><span class="meta-key">СТАТУС:</span> <b id="doc-overlay-status">К ИЗУЧЕНИЮ</b></span>
+        </div>
+        <!-- ─ Категория и заголовок документа ─ -->
+        <div class="doc-overlay-cat" id="doc-overlay-cat"></div>
+        <div class="doc-overlay-title" id="doc-overlay-title"></div>
       </div>
       <div class="doc-overlay-body">
         <div class="doc-overlay-text" id="doc-overlay-text"></div>
@@ -696,6 +1644,40 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
   </div>
 </div>
 
+
+<!-- ═══ INTRO CARD — вводное приветствие куратора ══════════════════ -->
+<div class="intro-overlay" id="intro-overlay">
+  <div class="intro-card">
+    <div class="intro-curator">
+      <div class="intro-curator-photo" id="intro-curator-photo"></div>
+      <div class="intro-curator-meta">
+        <div class="intro-curator-role">▸ Куратор расследования</div>
+        <div class="intro-curator-name">Агент Соколов</div>
+      </div>
+    </div>
+    <div class="intro-text" id="intro-text"></div>
+    <div class="intro-actions">
+      <button class="btn-intro-primary" onclick="closeIntroAndScroll('notebook')">К расследованию →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HINT BANNER — есть нерасставленные улики ═══════════════════ -->
+<div class="hint-overlay" id="hint-overlay">
+  <div class="hint-card">
+    <div class="hint-icon">💡</div>
+    <div class="hint-title">Не все улики разложены</div>
+    <div class="hint-text">
+      В материалах ещё остаются <b id="hint-count">0</b> важных фрагментов,
+      указывающих на конкретных людей. Загляни ещё раз — они подсвечены жёлтым:
+    </div>
+    <ul class="hint-docs" id="hint-docs"></ul>
+    <div class="hint-actions">
+      <button class="btn-hint-primary" onclick="closeHintBanner()">Вернуться к материалам</button>
+      <button class="btn-hint-ghost" onclick="forceAccuseAnyway()">Всё равно обвинить</button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ PAYWALL ════════════════════════════════════════════════════ -->
 <div class="paywall-overlay" id="paywall">
@@ -709,6 +1691,22 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
   </div>
 </div>
 
+<!-- ═══ TUTORIAL ════════════════════════════════════════════════════ -->
+<div id="tut-overlay">
+  <div id="tut-dim"></div>
+  <div id="tut-spotlight"></div>
+  <div id="tut-card">
+    <div class="tut-step" id="tut-step">ШАГ 1 / 5</div>
+    <div class="tut-title" id="tut-title"></div>
+    <div class="tut-text" id="tut-text"></div>
+    <div class="tut-actions">
+      <button class="tut-skip" onclick="skipTutorial()">Пропустить</button>
+      <div class="tut-dots" id="tut-dots"></div>
+      <button class="tut-next" id="tut-next-btn" onclick="tutorialNext()">Далее →</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ RESULT ═════════════════════════════════════════════════════ -->
 <div class="result-overlay" id="result-overlay">
   <div class="result-box" id="result-box">
@@ -718,51 +1716,64 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
     <div class="result-rank" id="result-rank"></div>
     <button class="btn btn-primary" id="result-epilogue-btn" onclick="openEpilogue()" style="display:none;margin-right:12px">Открыть эпилог</button>
     <button class="btn btn-primary" onclick="closeResult()" style="margin-right:12px">Продолжить</button>
-    <button class="btn btn-ghost" onclick="showScreen('cabinet')">В кабинет</button>
+    <button class="btn btn-ghost" onclick="backToCabinet()">В кабинет</button>
   </div>
 </div>
 
 <!-- ═══ EPILOGUE ═══════════════════════════════════════════════════ -->
 <div id="screen-epilogue" class="screen">
   <div class="epilogue-wrap">
-    <button class="game-back" onclick="showScreen('cabinet')">← Кабинет</button>
+    <div class="epilogue-topbar">
+      <button class="game-back" onclick="backToCabinet()">← Кабинет</button>
+      <div class="epilogue-slide-counter">
+        <span id="ep-slide-current">1</span> / <span id="ep-slide-total">7</span>
+      </div>
+    </div>
 
     <div class="epilogue-headline" id="ep-headline"></div>
     <div class="epilogue-answer">Виновник: <b id="ep-answer"></b></div>
 
-    <section class="epilogue-section">
-      <h3 class="epilogue-h">▸ Что произошло на самом деле</h3>
-      <div class="epilogue-story" id="ep-story"></div>
-    </section>
+    <div class="epilogue-slides">
+      <section class="epilogue-section ep-slide active" data-slide="0" data-title="Что произошло на самом деле">
+        <h3 class="epilogue-h">▸ Что произошло на самом деле</h3>
+        <div class="epilogue-story" id="ep-story"></div>
+      </section>
 
-    <section class="epilogue-section">
-      <h3 class="epilogue-h">▸ Хронология ночи</h3>
-      <ul class="epilogue-list" id="ep-timeline"></ul>
-    </section>
+      <section class="epilogue-section ep-slide" data-slide="1" data-title="Хронология ночи">
+        <h3 class="epilogue-h">▸ Хронология ночи</h3>
+        <ul class="epilogue-list" id="ep-timeline"></ul>
+      </section>
 
-    <section class="epilogue-section">
-      <h3 class="epilogue-h">▸ Как улики указывали на убийцу</h3>
-      <div class="epilogue-clues" id="ep-clues"></div>
-    </section>
+      <section class="epilogue-section ep-slide" data-slide="2" data-title="Как улики указывали на убийцу">
+        <h3 class="epilogue-h">▸ Как улики указывали на убийцу</h3>
+        <div class="epilogue-clues" id="ep-clues"></div>
+      </section>
 
-    <section class="epilogue-section">
-      <h3 class="epilogue-h">▸ Что упустило официальное следствие</h3>
-      <ul class="epilogue-list" id="ep-misses"></ul>
-    </section>
+      <section class="epilogue-section ep-slide" data-slide="3" data-title="Что упустило официальное следствие">
+        <h3 class="epilogue-h">▸ Что упустило официальное следствие</h3>
+        <ul class="epilogue-list" id="ep-misses"></ul>
+      </section>
 
-    <section class="epilogue-section">
-      <h3 class="epilogue-h">▸ Приговор</h3>
-      <div class="epilogue-story" id="ep-sentence"></div>
-    </section>
+      <section class="epilogue-section ep-slide" data-slide="4" data-title="Приговор">
+        <h3 class="epilogue-h">▸ Приговор</h3>
+        <div class="epilogue-story" id="ep-sentence"></div>
+      </section>
 
-    <section class="epilogue-section" id="ep-additional-section" style="display:none">
-      <h3 class="epilogue-h">▸ Дополнительные материалы — открыты после раскрытия</h3>
-      <div class="epilogue-clues" id="ep-additional"></div>
-    </section>
+      <section class="epilogue-section ep-slide" id="ep-additional-section" data-slide="5" data-title="Дополнительные материалы" style="display:none">
+        <h3 class="epilogue-h">▸ Дополнительные материалы — открыты после раскрытия</h3>
+        <div class="epilogue-clues" id="ep-additional"></div>
+      </section>
 
-    <section class="epilogue-section">
-      <div class="epilogue-press" id="ep-press"></div>
-    </section>
+      <section class="epilogue-section ep-slide" data-slide="6" data-title="Заметка прессы">
+        <div class="epilogue-press" id="ep-press"></div>
+      </section>
+    </div>
+
+    <div class="epilogue-nav">
+      <button class="ep-nav-btn ep-prev" onclick="epilogueSlide(-1)">← Назад</button>
+      <div class="ep-nav-dots" id="ep-nav-dots"></div>
+      <button class="ep-nav-btn ep-next" onclick="epilogueSlide(1)">Далее →</button>
+    </div>
   </div>
 </div>
 
@@ -883,12 +1894,16 @@ async function loadCabinet() {
     state.emailVerified = true;
     document.getElementById('verify-banner').style.display = 'none';
 
-    // rank progress bar
-    const ranks = ['Стажёр','Младший агент','Агент','Старший агент','Эксперт','Легенда агентства'];
-    const thresholds = [0,1,3,5,8,15];
-    const idx = ranks.indexOf(profile.rank);
-    const next = thresholds[idx+1] || 20;
-    const pct = Math.min(100, ((profile.cases_solved - thresholds[idx]) / (next - thresholds[idx])) * 100);
+    // rank progress bar — синхронизировано с Ranks.java
+    const ranks = [
+      'Стажёр', 'Младший агент', 'Агент', 'Старший агент',
+      'Оперативник', 'Следователь Агентства', 'Эксперт по делам', 'Легенда Агентства'
+    ];
+    const thresholds = [0, 1, 2, 3, 4, 5, 7, 10];
+    const idx = Math.max(0, ranks.indexOf(profile.rank));
+    const next = thresholds[idx + 1] || 12;
+    const span = (next - thresholds[idx]) || 1;
+    const pct = Math.min(100, ((profile.cases_solved - thresholds[idx]) / span) * 100);
     document.getElementById('rank-bar').style.width = pct + '%';
 
     // achievements — рендерим динамически из реестра, который пришёл с бэка
@@ -905,18 +1920,26 @@ async function loadCabinet() {
     ).join('');
   } catch(e) { console.log(e); }
 
-  // cases
-  const res = await fetch(API + '/api/cases');
-  const cases = await res.json();
+  // cases (теперь с авторизацией — отдаёт статус прохождения по юзеру)
+  const cases = await api('/api/cases', null, 'GET');
   const grid = document.getElementById('cases-grid');
-  grid.innerHTML = cases.map(c => `
-    <div class="case-card" onclick="openCase('${c.id}')">
-      <div class="case-card-num">▸ ДЕЛО ОТКРЫТО</div>
-      <div class="case-card-title">${c.title}</div>
-      <div class="case-card-sub">${c.subtitle}</div>
-      <div class="case-card-status"><div class="status-dot"></div>Демо доступно</div>
-    </div>
-  `).join('');
+  grid.innerHTML = cases.map(c => {
+    const status = c.completed ? 'РАСКРЫТО'
+                  : c.paid     ? 'В РАБОТЕ — ПОЛНАЯ ВЕРСИЯ'
+                  : 'ДЕМО ДОСТУПНО';
+    const dotClass = c.completed ? 'paid' : (c.paid ? 'paid' : '');
+    const numLabel = c.completed ? '▸ ДЕЛО ЗАКРЫТО' : '▸ ДЕЛО ОТКРЫТО';
+    return `
+      <div class="case-card ${c.completed ? 'completed' : ''}" onclick="openCase('${c.id}')">
+        <div class="case-card-num">${numLabel}</div>
+        <div class="case-card-title">${c.title}</div>
+        <div class="case-card-sub">${c.subtitle}</div>
+        <div class="case-card-status">
+          <div class="status-dot ${dotClass}"></div>${status}
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function renderAchievements(achievements, earnedCount, total) {
@@ -942,7 +1965,9 @@ function renderAchievements(achievements, earnedCount, total) {
 }
 
 // ═══ GAME ═════════════════════════════════════════════════════════
-async function openCase(caseId) {
+async function openCase(caseId, opts) {
+  opts = opts || {};
+  const isReopen = (state.currentCase === caseId) && opts.preserveBoard;
   state.currentCase = caseId;
   showScreen('game');
   const data = await api('/api/case/start', {case_id: caseId});
@@ -955,9 +1980,30 @@ async function openCase(caseId) {
   state.paid             = data.paid;
   state.openDocId        = null;
 
-  // evidencesByColumn: { 'Имя': [evId, ...] }; всё инициализируется пустыми списками
-  state.evidencesByColumn = {};
-  (data.case.suspects || []).forEach(s => state.evidencesByColumn[s] = []);
+  // evidencesByColumn: всегда пробуем восстановить из localStorage.
+  // При isReopen с preserveBoard — также берём из in-memory state если он уже правильный.
+  const validIds = new Set((state.availableEvidences || []).map(e => e.id));
+  const freshBoard = {};
+  (data.case.suspects || []).forEach(s => freshBoard[s] = []);
+
+  if (isReopen && state.evidencesByColumn) {
+    // После оплаты — чистим от недоступных улик, остальное оставляем
+    Object.keys(state.evidencesByColumn).forEach(s => {
+      if (freshBoard.hasOwnProperty(s)) {
+        freshBoard[s] = state.evidencesByColumn[s].filter(id => validIds.has(id));
+      }
+    });
+    state.evidencesByColumn = freshBoard;
+  } else {
+    // Обычный вход / повторный вход: восстанавливаем из localStorage
+    const saved = loadBoard(caseId, [...validIds]);
+    if (saved) {
+      Object.keys(freshBoard).forEach(s => {
+        freshBoard[s] = (saved[s] || []);
+      });
+    }
+    state.evidencesByColumn = freshBoard;
+  }
 
   document.getElementById('game-title').textContent = data.case.title;
   document.getElementById('game-paid-status').textContent = data.paid ? '🔓 ПОЛНАЯ ВЕРСИЯ' : '🔒 ДЕМО';
@@ -967,7 +2013,52 @@ async function openCase(caseId) {
   renderSuspectColumns();
   updateProgress();
 
-  addChatMsg('system', `Дело получено. Жертва: ${data.case.victim}. Место: ${data.case.location}. Официальная версия: ${data.case.official_version}. Агентство считает иначе.`);
+  // Intro/Tutorial — только при самом первом входе (ни один документ ещё не открыт).
+  const hasProgress = (data.unlocked_docs || []).length > 0;
+  if (!hasProgress && !isReopen) {
+    const msgs = document.getElementById('chat-messages');
+    if (msgs) msgs.innerHTML = '';
+    if (!localStorage.getItem('agency_tutorial_done')) {
+      // Новый игрок: показываем туториал, после него — intro-карточка
+      state._pendingIntroData = data;
+      startTutorial();
+    } else {
+      showIntroCard(data);
+    }
+  } else if (isReopen) {
+    addChatMsg('system', '▸ Открыт полный архив. В блокноте — твои отметки. В материалах — новые документы.');
+  } else {
+    // Повторный вход с прогрессом: короткое напоминание вместо intro
+    const msgs = document.getElementById('chat-messages');
+    if (msgs) msgs.innerHTML = '';
+    const placed = Object.values(state.evidencesByColumn).reduce((s, a) => s + a.length, 0);
+    addChatMsg('system', `▸ Продолжаем расследование. Открыто документов: ${(data.unlocked_docs || []).length} / ${data.required_doc_count}. Улик в блокноте: ${placed}.`);
+  }
+}
+
+// ═══ INTRO CARD ════════════════════════════════════════════════════
+function showIntroCard(data) {
+  state._pendingIntroText = `Папка с материалами передана. <b>Жертва:</b> ${data.case.victim}. <b>Место:</b> ${data.case.location}. <b>Официальная версия:</b> ${data.case.official_version}. Агентство считает иначе.\n\nИзучи документы, выдели важное и разложи фрагменты по подозреваемым.`;
+  document.getElementById('intro-text').innerHTML = state._pendingIntroText.replace(/\n/g, '<br/>');
+
+  // Фото куратора — пока стилизованный кружок "С" (можно заменить на реальный портрет)
+  document.getElementById('intro-curator-photo').innerHTML = 'С';
+
+  document.getElementById('intro-overlay').classList.add('show');
+}
+
+function closeIntroAndScroll(target) {
+  document.getElementById('intro-overlay').classList.remove('show');
+  // Добавим вводный текст в чат помощника — игрок может перечитать
+  const plainText = (state._pendingIntroText || '').replace(/<[^>]+>/g, '');
+  if (plainText) addChatMsg('system', plainText);
+  state._pendingIntroText = null;
+
+  // Прокрутка/фокус на нужный блок (на десктопе ничего не делаем,
+  // на мобиле — переключаем таб)
+  if (window.innerWidth < 768) {
+    mobileSwitchTab(target);
+  }
 }
 
 // ═══ PROGRESS ════════════════════════════════════════════════════════
@@ -978,8 +2069,63 @@ function updateProgress() {
   if (!el) return;
   el.textContent = `Изучено документов: ${opened} / ${total}`;
   el.classList.toggle('complete', total > 0 && opened >= total);
+
+  // Общий прогресс-бар: 50% за документы, 50% за расставленные улики
+  const availableEvCount = (state.availableEvidences || []).length;
+  const placedCount = Object.values(state.evidencesByColumn || {})
+    .reduce((sum, arr) => sum + arr.length, 0);
+
+  const docsPct = total > 0 ? (opened / total) : 0;
+  // Не наказываем за то, что не все улики использованы — берём порог "минимум на одного"
+  const min = state.minEvidences || 1;
+  const evPct = Math.min(1, placedCount / min);
+  const totalPct = Math.round((docsPct * 0.5 + evPct * 0.5) * 100);
+
+  const fillEl = document.getElementById('progress-fill');
+  if (fillEl) fillEl.style.width = totalPct + '%';
+  const pDocs = document.getElementById('prog-docs');
+  if (pDocs) pDocs.textContent = `${opened} / ${total}`;
+  const pEvs = document.getElementById('prog-evs');
+  if (pEvs) pEvs.textContent = `${placedCount} / ${availableEvCount}`;
+
+  const statusEl = document.getElementById('prog-status');
+  if (statusEl) {
+    let status = 'Расследование начато';
+    if (opened === 0) status = 'Открой первый документ →';
+    else if (opened < total) status = 'Изучай материалы';
+    else if (placedCount === 0) status = 'Открыто всё — теперь раскладывай улики';
+    else if (placedCount < min) status = `Нужно минимум ${min} улик`;
+    else status = 'Готов к обвинению ✓';
+    statusEl.textContent = status;
+  }
+
+  // Подсветка документов, в которых ещё есть нерасставленные улики
+  highlightDocsWithUnplaced();
+
   // Кнопки обвинения зависят от прогресса и наполнения столбцов
   updateAllAccuseButtons();
+}
+
+/**
+ * Подсвечивает строки документов в правой колонке, в которых ещё
+ * есть улики, не размещённые в блокноте. Помогает игроку понять,
+ * куда вернуться, когда все доки уже открыты.
+ */
+function highlightDocsWithUnplaced() {
+  const placed = new Set();
+  Object.values(state.evidencesByColumn || {}).forEach(arr =>
+    arr.forEach(id => placed.add(id))
+  );
+  const docsWithUnplaced = new Set();
+  (state.availableEvidences || []).forEach(e => {
+    // Подсвечиваем только улики, указывающие на конкретного подозреваемого
+    // (нейтральные не обязательны для обвинения).
+    if (e.points_to && !placed.has(e.id)) docsWithUnplaced.add(e.source_doc);
+  });
+  document.querySelectorAll('.doc-row').forEach(row => {
+    const did = row.id.replace('doc-row-', '');
+    row.classList.toggle('has-unplaced', docsWithUnplaced.has(did));
+  });
 }
 
 // ═══ ACTIONS BAR (помощник) ══════════════════════════════════════════
@@ -993,7 +2139,14 @@ function renderActions(actions) {
 async function doAction(actionId) {
   try {
     const res = await api('/api/case/action', {case_id: state.currentCase, action: actionId});
-    addChatMsg('assistant', res.response);
+    // Если действие связано с конкретным подозреваемым (check_semenov, check_fayzullin)
+    // — рядом с сообщением показываем его аватарку и подпись
+    const suspectKey = ACTION_TO_SUSPECT[actionId];
+    if (suspectKey && SUSPECT_INFO[suspectKey]) {
+      addChatMsgWithSuspect(SUSPECT_INFO[suspectKey], suspectKey, res.response);
+    } else {
+      addChatMsg('assistant', res.response);
+    }
   } catch(e) { addChatMsg('system', 'Ошибка: ' + e.message); }
 }
 
@@ -1004,6 +2157,361 @@ function addChatMsg(type, text) {
   div.textContent = text;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addChatMsgWithSuspect(info, key, text) {
+  const msgs = document.getElementById('chat-messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg-suspect';
+  wrap.innerHTML = `
+    <div class="chat-suspect-card">
+      ${suspectAvatarSVG({...info, key}, 72)}
+      <div class="chat-suspect-meta">
+        <div class="chat-suspect-name">${info.full}</div>
+        <div class="chat-suspect-role">${info.role} · ${info.age} лет</div>
+        <div class="chat-suspect-status">${info.status}</div>
+      </div>
+    </div>
+    <div class="chat-msg assistant chat-suspect-text"></div>
+  `;
+  wrap.querySelector('.chat-suspect-text').textContent = text;
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ═══ РЕЕСТР ПОДОЗРЕВАЕМЫХ (фото, метаданные) ═════════════════════
+// Подобрано так, чтобы покрыть все досье первого дела. В будущем
+// — выгрузим в JSON-сценарий вместе с делом.
+const SUSPECT_INFO = {
+  'Семёнов И.В.':   { full: 'СЕМЁНОВ Игорь Валерьевич',    initials: 'СВ', age: 47, role: 'Начальник цеха №4',           status: 'ПРОВЕРКА АЛИБИ',  match: ['Семёнов'] },
+  'Файзуллин Р.М.': { full: 'ФАЙЗУЛЛИН Рустам Маратович',  initials: 'ФР', age: 38, role: 'Охранник, пост №3',           status: 'СОУЧАСТНИК',     match: ['Файзуллин'] },
+  'Краснова А.В.':  { full: 'КРАСНОВА Алина Викторовна',   initials: 'КА', age: 31, role: 'Финансовый директор',         status: 'АЛИБИ ПРОВЕРЕНО',match: ['Краснова А.В.', 'Алина Краснова'] },
+  'Волкова М.А.':   { full: 'ВОЛКОВА Марина Александровна',initials: 'ВМ', age: 44, role: 'Секретарь тех. директора',    status: 'ОПЕРАТИВНАЯ',    match: ['Волкова', 'Марина Волкова'] },
+};
+// action_id → подозреваемый (для аватарки в чате)
+const ACTION_TO_SUSPECT = {
+  'check_semenov':   'Семёнов И.В.',
+  'check_fayzullin': 'Файзуллин Р.М.',
+};
+
+function findSuspectByText(text) {
+  if (!text) return null;
+  for (const [key, info] of Object.entries(SUSPECT_INFO)) {
+    for (const needle of info.match) if (text.includes(needle)) return { key, ...info };
+  }
+  return null;
+}
+
+// Парсер текста досье на структурированные блоки.
+// Формат текста (как в Cases.java): первая строка = заголовок, далее
+// блоки разделены пустыми строками. Внутри блока первая строка
+// заканчивающаяся на ":" — подзаголовок, строки с "— " — bullet items.
+// Особый блок "ПРИМЕЧАНИЕ АГЕНТСТВА" выделяется красной плашкой.
+function parseDossierContent(text) {
+  const lines = (text || '').split('\n').map(l => l.replace(/\s+$/,''));
+  // Пропускаем первые две строки (это заголовок-маркер + ФИО — у нас уже есть)
+  let start = 0;
+  while (start < lines.length && lines[start].trim() === '') start++;
+  // Skip 1-2 верхних строк если они выглядят как «ДОСЬЕ ПОДОЗРЕВАЕМОГО» / «Семёнов И.В. ...»
+  if (start < lines.length && /^ДОСЬЕ/i.test(lines[start].trim())) start++;
+  if (start < lines.length && /\d{2}\s+лет/.test(lines[start])) start++;
+
+  // Делим на блоки по пустым строкам
+  const blocks = [];
+  let cur = [];
+  for (let i = start; i < lines.length; i++) {
+    if (lines[i].trim() === '') {
+      if (cur.length) { blocks.push(cur); cur = []; }
+    } else {
+      cur.push(lines[i]);
+    }
+  }
+  if (cur.length) blocks.push(cur);
+
+  // Рендер блоков в HTML
+  let html = '';
+  for (const block of blocks) {
+    const first = (block[0] || '').trim();
+
+    // ПРИМЕЧАНИЕ АГЕНТСТВА: ... — отдельная красная плашка
+    if (/^ПРИМЕЧАНИЕ\s+АГЕНТСТВА/i.test(first) || first.startsWith('─')) {
+      // Чистим декоративные линии вида ─────
+      const body = block
+        .filter(l => !/^─+$/.test(l.trim()))
+        .filter(l => !/^ПРИМЕЧАНИЕ\s+АГЕНТСТВА/i.test(l.trim()))
+        .join(' ').trim();
+      if (body) {
+        html += `<div class="dossier-note">
+          <div class="dossier-note-title">▸ Примечание Агентства</div>
+          <div>${escapeHtml(body)}</div>
+        </div>`;
+      }
+      continue;
+    }
+
+    // Если первая строка кончается на ":" — это подзаголовок секции
+    if (first.endsWith(':')) {
+      const sub = first.replace(/:$/, '');
+      const rest = block.slice(1);
+      const items = rest.filter(l => /^\s*[—–-]\s+/.test(l));
+      const paragraphs = rest.filter(l => !/^\s*[—–-]\s+/.test(l));
+      html += `<div class="dossier-section">
+        <div class="dossier-section-title">${escapeHtml(sub)}</div>`;
+      for (const p of paragraphs) html += `<div class="dossier-para">${escapeHtml(p.trim())}</div>`;
+      if (items.length) {
+        html += `<ul class="dossier-list">`;
+        for (const it of items) {
+          html += `<li>${escapeHtml(it.replace(/^\s*[—–-]\s+/, '').trim())}</li>`;
+        }
+        html += `</ul>`;
+      }
+      html += `</div>`;
+      continue;
+    }
+
+    // Обычный блок параграфов
+    html += `<div class="dossier-section">`;
+    for (const l of block) html += `<div class="dossier-para">${escapeHtml(l.trim())}</div>`;
+    html += `</div>`;
+  }
+  return html;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+function renderDossierHTML(doc, suspect) {
+  return `
+    <div class="dossier-grid">
+      <aside class="dossier-photo">
+        <div class="dossier-photo-cap">PHOTO ID</div>
+        ${suspectAvatarSVG(suspect, 180)}
+        <div class="dossier-photo-label">${escapeHtml(suspect.full)}</div>
+
+        <!-- Краткая карточка PERSONAL DATA под фото -->
+        <div class="dossier-mini" style="margin-top:6px; width:100%">
+          <div class="dossier-section-title" style="font-size:10px; margin-bottom:6px">Personal Data</div>
+          <div class="dossier-row"><span>ФИО:</span><b>${escapeHtml(suspect.full)}</b></div>
+          <div class="dossier-row"><span>Возраст:</span><b>${suspect.age}</b></div>
+          <div class="dossier-row"><span>Должность:</span><b>${escapeHtml(suspect.role)}</b></div>
+          <div class="dossier-row"><span>Статус:</span><b class="status-red">${suspect.status}</b></div>
+        </div>
+      </aside>
+      <div class="dossier-content">
+        <div class="dossier-section-title">Operational Specialization</div>
+        ${parseDossierContent(doc.content)}
+      </div>
+    </div>
+  `;
+}
+
+// ═══ ПОРТРЕТЫ ПОДОЗРЕВАЕМЫХ (police sketch стиль) ═══
+// Каждое лицо нарисовано индивидуально SVG-примитивами:
+// овал лица, причёска, глаза, нос, рот, плечи, штриховка.
+// Стилизация — графический карандаш на старой бумаге.
+//
+// Если потом подключим реальные фото от Midjourney —
+// просто заменим вызов suspectPortraitFor(info.key) на <img src=info.photo>.
+
+function suspectPortraitFor(key) {
+  // Возвращает «начинку» SVG портрета (без рамки и фона —
+  // их рисует suspectAvatarSVG). Координаты внутри 200x230.
+  const sketches = {
+    'Семёнов И.В.': `
+      <!-- Семёнов: 47, нач. цеха, тяжёлый взгляд, короткая стрижка, щетина -->
+      <g stroke="#1a1411" stroke-width="1.3" fill="none" stroke-linecap="round">
+        <!-- шея и плечи -->
+        <path d="M68 175 Q70 195 60 215  L20 230"/>
+        <path d="M132 175 Q130 195 140 215 L180 230"/>
+        <!-- овал лица: прямоугольное, тяжёлая челюсть -->
+        <path d="M55 95 Q52 130 60 160 Q72 180 100 182 Q128 180 140 160 Q148 130 145 95"/>
+        <!-- линия волос: короткая стрижка -->
+        <path d="M55 95 Q60 65 100 60 Q140 65 145 95"/>
+        <path d="M62 85 L75 80" stroke-width="0.8"/>
+        <path d="M125 80 L138 85" stroke-width="0.8"/>
+        <!-- брови — нахмуренные -->
+        <path d="M68 108 Q75 104 88 108" stroke-width="1.5"/>
+        <path d="M112 108 Q125 104 132 108" stroke-width="1.5"/>
+        <!-- глаза -->
+        <path d="M72 118 Q80 122 88 118"/>
+        <path d="M112 118 Q120 122 128 118"/>
+        <circle cx="80" cy="120" r="1.5" fill="#1a1411"/>
+        <circle cx="120" cy="120" r="1.5" fill="#1a1411"/>
+        <!-- мешки под глазами -->
+        <path d="M73 126 Q80 128 87 126" stroke-width="0.6"/>
+        <path d="M113 126 Q120 128 127 126" stroke-width="0.6"/>
+        <!-- нос -->
+        <path d="M100 122 Q97 140 95 148 Q100 152 105 148 Q103 140 100 122"/>
+        <!-- усы и рот -->
+        <path d="M88 158 Q100 162 112 158" stroke-width="0.8"/>
+        <path d="M90 165 Q100 168 110 165"/>
+        <!-- щетина (штриховка) -->
+        <g stroke-width="0.4" opacity="0.6">
+          <line x1="80" y1="170" x2="82" y2="173"/>
+          <line x1="86" y1="172" x2="88" y2="175"/>
+          <line x1="95" y1="174" x2="97" y2="177"/>
+          <line x1="103" y1="174" x2="105" y2="177"/>
+          <line x1="112" y1="172" x2="114" y2="175"/>
+          <line x1="118" y1="170" x2="120" y2="173"/>
+        </g>
+        <!-- морщины -->
+        <path d="M62 135 Q70 132 78 135" stroke-width="0.5" opacity="0.5"/>
+        <path d="M122 135 Q130 132 138 135" stroke-width="0.5" opacity="0.5"/>
+      </g>`,
+
+    'Файзуллин Р.М.': `
+      <!-- Файзуллин: 38, охранник, восточные черты, тёмные волосы, усталый взгляд -->
+      <g stroke="#1a1411" stroke-width="1.3" fill="none" stroke-linecap="round">
+        <path d="M70 175 Q72 195 62 215 L22 230"/>
+        <path d="M130 175 Q128 195 138 215 L178 230"/>
+        <!-- лицо овальное, более узкое -->
+        <path d="M60 100 Q58 135 65 160 Q78 180 100 183 Q122 180 135 160 Q142 135 140 100"/>
+        <!-- волосы: тёмные, аккуратные -->
+        <path d="M60 100 Q63 70 100 62 Q137 70 140 100" fill="#1a1411" opacity="0.45"/>
+        <path d="M65 88 Q80 75 100 73" stroke-width="0.6"/>
+        <path d="M135 88 Q120 75 100 73" stroke-width="0.6"/>
+        <!-- брови — высокие, грустные -->
+        <path d="M70 112 Q80 109 90 112"/>
+        <path d="M110 112 Q120 109 130 112"/>
+        <!-- глаза — слегка раскосые, опущенные углы -->
+        <path d="M73 122 Q80 126 90 122"/>
+        <path d="M110 122 Q120 126 127 122"/>
+        <circle cx="81" cy="124" r="1.4" fill="#1a1411"/>
+        <circle cx="119" cy="124" r="1.4" fill="#1a1411"/>
+        <!-- тонкий прямой нос -->
+        <path d="M100 125 L98 148 Q100 152 102 148 L100 125"/>
+        <!-- рот, нейтральный -->
+        <path d="M88 162 Q100 164 112 162"/>
+        <!-- щетина едва -->
+        <g stroke-width="0.3" opacity="0.4">
+          <line x1="78" y1="170" x2="80" y2="172"/>
+          <line x1="88" y1="172" x2="90" y2="174"/>
+          <line x1="100" y1="173" x2="102" y2="175"/>
+          <line x1="112" y1="172" x2="114" y2="174"/>
+          <line x1="120" y1="170" x2="122" y2="172"/>
+        </g>
+      </g>`,
+
+    'Краснова А.В.': `
+      <!-- Алина: 31, фин.директор, светлые волосы каре, острые черты -->
+      <g stroke="#1a1411" stroke-width="1.3" fill="none" stroke-linecap="round">
+        <path d="M70 175 Q70 195 60 215 L20 230"/>
+        <path d="M130 175 Q130 195 140 215 L180 230"/>
+        <!-- лицо: овальное, удлинённое, заострённое -->
+        <path d="M62 100 Q60 130 68 158 Q82 178 100 182 Q118 178 132 158 Q140 130 138 100"/>
+        <!-- причёска: каре до плеч -->
+        <path d="M62 100 Q55 75 75 60 Q100 52 125 60 Q145 75 138 100 L142 130 Q142 150 138 165"/>
+        <path d="M58 130 Q58 150 62 165"/>
+        <path d="M75 90 Q90 80 100 80 Q110 80 125 90" stroke-width="0.7"/>
+        <!-- тонкие брови -->
+        <path d="M72 113 Q82 110 92 113" stroke-width="0.9"/>
+        <path d="M108 113 Q118 110 128 113" stroke-width="0.9"/>
+        <!-- глаза — миндалевидные -->
+        <path d="M74 122 Q82 119 90 122 Q82 126 74 122"/>
+        <path d="M110 122 Q118 119 126 122 Q118 126 110 122"/>
+        <circle cx="82" cy="123" r="1.3" fill="#1a1411"/>
+        <circle cx="118" cy="123" r="1.3" fill="#1a1411"/>
+        <!-- ресницы -->
+        <line x1="74" y1="120" x2="73" y2="118" stroke-width="0.4"/>
+        <line x1="78" y1="119" x2="77" y2="116" stroke-width="0.4"/>
+        <line x1="122" y1="119" x2="123" y2="116" stroke-width="0.4"/>
+        <line x1="126" y1="120" x2="127" y2="118" stroke-width="0.4"/>
+        <!-- нос: маленький -->
+        <path d="M99 130 L98 148 Q100 151 102 148 L101 130" stroke-width="0.8"/>
+        <!-- рот: подчёркнутые губы -->
+        <path d="M88 160 Q100 158 112 160" stroke-width="1.1"/>
+        <path d="M88 160 Q100 165 112 160" stroke-width="1"/>
+        <!-- скулы -->
+        <path d="M68 145 Q73 142 78 145" stroke-width="0.4" opacity="0.5"/>
+        <path d="M122 145 Q127 142 132 145" stroke-width="0.4" opacity="0.5"/>
+      </g>`,
+
+    'Волкова М.А.': `
+      <!-- Марина: 44, секретарь, волосы убраны назад в пучок, спокойное лицо -->
+      <g stroke="#1a1411" stroke-width="1.3" fill="none" stroke-linecap="round">
+        <path d="M70 175 Q72 195 62 215 L22 230"/>
+        <path d="M130 175 Q128 195 138 215 L178 230"/>
+        <!-- лицо: овальное, спокойное -->
+        <path d="M62 100 Q60 135 68 160 Q82 180 100 182 Q118 180 132 160 Q140 135 138 100"/>
+        <!-- волосы убраны назад: гладкая линия -->
+        <path d="M62 100 Q65 72 100 65 Q135 72 138 100"/>
+        <path d="M65 90 Q100 80 135 90" stroke-width="0.5"/>
+        <!-- пучок сзади (намёк) -->
+        <ellipse cx="100" cy="70" rx="16" ry="8" stroke-width="0.7" opacity="0.6"/>
+        <!-- брови тонкие, ровные -->
+        <path d="M72 114 Q82 112 92 114" stroke-width="0.8"/>
+        <path d="M108 114 Q118 112 128 114" stroke-width="0.8"/>
+        <!-- глаза — спокойные, неподвижные (важная деталь сюжета) -->
+        <path d="M73 124 Q82 122 91 124"/>
+        <path d="M109 124 Q118 122 127 124"/>
+        <circle cx="82" cy="124" r="1.6" fill="#1a1411"/>
+        <circle cx="118" cy="124" r="1.6" fill="#1a1411"/>
+        <!-- лёгкие тени под глазами — усталость -->
+        <path d="M75 130 Q82 132 90 130" stroke-width="0.4" opacity="0.4"/>
+        <path d="M110 130 Q118 132 126 130" stroke-width="0.4" opacity="0.4"/>
+        <!-- нос — прямой, средний -->
+        <path d="M99 128 L97 148 Q100 152 103 148 L101 128"/>
+        <!-- рот — тонкая прямая линия. Без улыбки. -->
+        <path d="M88 162 L112 162" stroke-width="1.1"/>
+        <!-- лёгкая морщина у губ — много молчания за 18 лет -->
+        <path d="M85 158 Q88 162 85 166" stroke-width="0.4" opacity="0.45"/>
+        <path d="M115 158 Q112 162 115 166" stroke-width="0.4" opacity="0.45"/>
+        <!-- едва заметная серёжка -->
+        <circle cx="58" cy="148" r="1" fill="#1a1411" opacity="0.6"/>
+        <circle cx="142" cy="148" r="1" fill="#1a1411" opacity="0.6"/>
+      </g>`,
+  };
+  return sketches[key] || sketches['Семёнов И.В.'];
+}
+
+function suspectAvatarSVG(info, size) {
+  size = size || 140;
+  const key = info.key || 'Семёнов И.В.';
+  const fullName = (info.full || '').toUpperCase().slice(0, 22);
+  const idLine = `ID-${(info.age || '00')}-${(info.key || 'XX').replace(/[^А-Яа-я]/g, '').slice(0,3).toUpperCase() || 'XXX'}`;
+  return `
+  <svg viewBox="0 0 200 250" width="${size}" height="${size * 1.25}"
+       xmlns="http://www.w3.org/2000/svg" class="suspect-avatar-svg">
+    <defs>
+      <!-- Текстура старой бумаги, фон -->
+      <linearGradient id="paper-${(info.key||'x').replace(/\W/g,'')}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%"  stop-color="#e8d7a8"/>
+        <stop offset="100%" stop-color="#c5b080"/>
+      </linearGradient>
+      <!-- Штриховка-зернистость -->
+      <pattern id="grain-${(info.key||'x').replace(/\W/g,'')}" width="3" height="3" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r="0.4" fill="rgba(58,38,20,0.18)"/>
+      </pattern>
+    </defs>
+    <!-- бумажный фон -->
+    <rect width="200" height="250" fill="url(#paper-${(info.key||'x').replace(/\W/g,'')})"/>
+    <rect width="200" height="250" fill="url(#grain-${(info.key||'x').replace(/\W/g,'')})"/>
+    <!-- виньетка -->
+    <radialGradient id="vig-${(info.key||'x').replace(/\W/g,'')}" cx="50%" cy="50%" r="70%">
+      <stop offset="60%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(58,38,20,0.35)"/>
+    </radialGradient>
+    <rect width="200" height="250" fill="url(#vig-${(info.key||'x').replace(/\W/g,'')})"/>
+
+    <!-- индивидуальный портрет -->
+    ${suspectPortraitFor(key)}
+
+    <!-- нижняя плашка с метаданными -->
+    <line x1="0" y1="205" x2="200" y2="205" stroke="#1a1411" stroke-width="0.6" opacity="0.5"/>
+    <text x="100" y="220" text-anchor="middle"
+          font-family="Special Elite, monospace" font-size="10" fill="#1a1411">${fullName}</text>
+    <text x="100" y="235" text-anchor="middle"
+          font-family="Special Elite, monospace" font-size="8" fill="#3a2f24" opacity="0.8">${idLine}</text>
+
+    <!-- штамп ID в углу -->
+    <g transform="translate(170,15) rotate(8)">
+      <rect x="-22" y="-9" width="44" height="18" fill="none" stroke="#8b2c2c" stroke-width="1.3" opacity="0.7"/>
+      <text x="0" y="4" text-anchor="middle"
+            font-family="Special Elite, monospace" font-size="8" fill="#8b2c2c" opacity="0.8">PHOTO ID</text>
+    </g>
+  </svg>`;
 }
 
 // ═══ DOCS LIST + OVERLAY ═════════════════════════════════════════
@@ -1039,7 +2547,38 @@ async function openDocOverlay(docId) {
   // заполняем overlay
   document.getElementById('doc-overlay-cat').textContent  = doc.category;
   document.getElementById('doc-overlay-title').textContent = doc.title;
-  document.getElementById('doc-overlay-text').textContent  = doc.content;
+
+  // ── СПЕЦ-ЛЭЙАУТ для категории «Досье» ──
+  const textEl = document.getElementById('doc-overlay-text');
+  const card   = document.getElementById('doc-overlay-card');
+  const suspect = doc.category === 'Досье' ? findSuspectByText(doc.title) : null;
+  if (suspect) {
+    card.classList.add('layout-dossier');
+    textEl.innerHTML = renderDossierHTML(doc, suspect);
+  } else {
+    card.classList.remove('layout-dossier');
+    textEl.textContent = doc.content;
+  }
+
+  // ───── мета-блок «папки дела» ─────
+  // боковая надпись по категории
+  const sideLabelMap = {
+    'Досье':       'ДОСЬЕ',
+    'Допросы':     'ПРОТОКОЛ',
+    'Экспертиза':  'ЭКСПЕРТИЗА',
+    'Архив':       'АРХИВ',
+    'Место происшествия': 'ОСМОТР',
+    'Финансы и связь':    'ОПЕРАТИВНЫЕ',
+  };
+  card.dataset.sideLabel = sideLabelMap[doc.category] || 'МАТЕРИАЛ';
+  // номер дела и документа
+  document.getElementById('doc-overlay-case-no').textContent = (state.currentCase || '').replace('case_', '').toUpperCase() + '-Ф';
+  document.getElementById('doc-overlay-doc-no').textContent  = (doc.id || '—').toUpperCase();
+  // статус документа
+  const opened = state.unlockedDocs.includes(docId);
+  document.getElementById('doc-overlay-status').textContent = opened ? 'ИЗУЧЕНО' : 'К ИЗУЧЕНИЮ';
+  card.classList.toggle('opened-stamp', opened);
+
   renderEvidencesInOverlay(docId);
 
   // если документ ещё не открыт на бэке — открываем
@@ -1055,6 +2594,10 @@ async function openDocOverlay(docId) {
           row.insertAdjacentHTML('beforeend', '<span class="doc-row-check">✓</span>');
         }
       }
+      // обновить штамп «ИЗУЧЕНО»
+      const cardEl = document.getElementById('doc-overlay-card');
+      cardEl.classList.add('opened-stamp');
+      document.getElementById('doc-overlay-status').textContent = 'ИЗУЧЕНО';
       updateProgress();
       renderEvidencesInOverlay(docId); // обновить, теперь улики из этого документа доступны
     } catch(e) { addChatMsg('system', 'Ошибка: ' + e.message); }
@@ -1152,6 +2695,7 @@ function moveEvidenceToColumn(evId, suspect) {
   Object.keys(state.evidencesByColumn).forEach(renderColumn);
   if (state.openDocId) renderEvidencesInOverlay(state.openDocId);
   updateAllAccuseButtons();
+  saveBoard(state.currentCase);
 }
 
 function removeEvidenceFromColumn(evId) {
@@ -1162,6 +2706,7 @@ function removeEvidenceFromColumn(evId) {
   Object.keys(state.evidencesByColumn).forEach(renderColumn);
   if (state.openDocId) renderEvidencesInOverlay(state.openDocId);
   updateAllAccuseButtons();
+  saveBoard(state.currentCase);
 }
 
 function updateAllAccuseButtons() {
@@ -1184,8 +2729,51 @@ function accuseFromColumn(suspect) {
     // Демо: бэк сам ответит demo_end → paywall
     return submitAccusation(suspect, []);
   }
+  // Если игрок открыл все доки, но не разместил все улики, указывающие
+  // на конкретного человека — мягкая подсказка перед отправкой обвинения.
+  const placed = new Set();
+  Object.values(state.evidencesByColumn || {}).forEach(arr => arr.forEach(id => placed.add(id)));
+  const unplacedPointing = (state.availableEvidences || []).filter(e =>
+    e.points_to && !placed.has(e.id)
+  );
+  if (unplacedPointing.length > 0) {
+    showHintBanner(unplacedPointing);
+    return;  // даём шанс сначала разложить
+  }
   const ids = (state.evidencesByColumn[suspect] || []).slice();
   return submitAccusation(suspect, ids);
+}
+
+/**
+ * Показывает мягкое предупреждение с указанием материалов, в которых
+ * остались нерасставленные улики. Игрок может закрыть и продолжить.
+ */
+let pendingAccuseSuspect = null;
+function showHintBanner(unplaced) {
+  // Уникальные документы-источники
+  const docs = (state.caseData && state.caseData.docs) || [];
+  const sourceTitles = [...new Set(unplaced.map(e => e.source_doc))]
+    .map(did => (docs.find(d => d.id === did) || {}).title || did);
+
+  const overlay = document.getElementById('hint-overlay');
+  document.getElementById('hint-count').textContent = unplaced.length;
+  document.getElementById('hint-docs').innerHTML = sourceTitles
+    .map(t => `<li>${t}</li>`).join('');
+  overlay.classList.add('show');
+}
+function closeHintBanner() {
+  document.getElementById('hint-overlay').classList.remove('show');
+}
+function forceAccuseAnyway() {
+  closeHintBanner();
+  // Найдём активный «обвиняемый» столбец — тот, в котором больше всего улик
+  let best = null, bestCount = -1;
+  Object.entries(state.evidencesByColumn || {}).forEach(([s, arr]) => {
+    if (arr.length > bestCount) { bestCount = arr.length; best = s; }
+  });
+  if (!best) return;
+  const ids = state.evidencesByColumn[best].slice();
+  submitAccusation(best, ids);
 }
 
 // ═══ DRAG & DROP (pointer events: мышь + тач + tap vs drag) ═══════════
@@ -1331,18 +2919,38 @@ async function submitAccusation(suspect, selected) {
   } catch(e) { addChatMsg('system', 'Ошибка: ' + e.message); }
 }
 
+// ═══ BOARD PERSISTENCE (localStorage) ════════════════════════════
+function saveBoard(caseId) {
+  try {
+    localStorage.setItem('board_' + caseId, JSON.stringify(state.evidencesByColumn));
+  } catch(e) {}
+}
+
+function loadBoard(caseId, availableIds) {
+  try {
+    const raw = localStorage.getItem('board_' + caseId);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (typeof parsed !== 'object' || !parsed) return null;
+    const valid = new Set(availableIds);
+    Object.keys(parsed).forEach(k => {
+      parsed[k] = (parsed[k] || []).filter(id => valid.has(id));
+    });
+    return parsed;
+  } catch(e) { return null; }
+}
+
 // ═══ PAYWALL ══════════════════════════════════════════════════════
 function showPaywall() { document.getElementById('paywall').classList.add('show'); }
 function closePaywall() { document.getElementById('paywall').classList.remove('show'); }
 
 async function doPay() {
   try {
-    // Инициализация платежа
     await api('/api/payment/init', {case_id: state.currentCase});
-    // В тестовом режиме — сразу подтверждаем.
     await api('/api/payment/confirm', {case_id: state.currentCase});
     closePaywall();
-    await openCase(state.currentCase); // перезагружаем дело с платным контентом
+    // Перезагружаем дело с платным контентом, НО сохраняем блокнот игрока
+    await openCase(state.currentCase, { preserveBoard: true });
   } catch(e) {
     closePaywall();
     showResult('wrong', '⚠', 'ОПЛАТА НЕДОСТУПНА', e.message, null);
@@ -1374,6 +2982,13 @@ async function openEpilogue() {
   } catch(e) {
     alert('Не удалось открыть эпилог: ' + e.message);
   }
+}
+
+// Возврат в кабинет с обновлением данных (достижения, статус дела)
+async function backToCabinet() {
+  closeResult();
+  try { await loadCabinet(); } catch(e) {}
+  showScreen('cabinet');
 }
 
 function renderEpilogue(data) {
@@ -1412,6 +3027,59 @@ function renderEpilogue(data) {
       </div>
     `).join('');
   }
+
+  // Инициализируем слайды эпилога
+  initEpilogueSlides();
+}
+
+// ═══ ЭПИЛОГ-СЛАЙДЫ ═════════════════════════════════════════════════
+function initEpilogueSlides() {
+  // Берём только видимые слайды (скрытая секция «доп.материалы» не считается)
+  state.epSlides = Array.from(document.querySelectorAll('.ep-slide'))
+    .filter(el => el.style.display !== 'none');
+  state.epSlideIdx = 0;
+  // Активная только первая
+  document.querySelectorAll('.ep-slide').forEach(el => el.classList.remove('active'));
+  if (state.epSlides[0]) state.epSlides[0].classList.add('active');
+  // Точки навигации
+  const dots = document.getElementById('ep-nav-dots');
+  dots.innerHTML = state.epSlides.map((s, i) =>
+    `<div class="ep-nav-dot ${i === 0 ? 'active' : ''}" onclick="epilogueGoTo(${i})" title="${s.dataset.title || ''}"></div>`
+  ).join('');
+  // Счётчик
+  document.getElementById('ep-slide-total').textContent = state.epSlides.length;
+  document.getElementById('ep-slide-current').textContent = 1;
+  // Кнопки
+  updateEpilogueNavButtons();
+}
+
+function epilogueSlide(dir) {
+  if (!state.epSlides || !state.epSlides.length) return;
+  const next = state.epSlideIdx + dir;
+  if (next < 0 || next >= state.epSlides.length) return;
+  epilogueGoTo(next);
+}
+
+function epilogueGoTo(idx) {
+  if (!state.epSlides || idx < 0 || idx >= state.epSlides.length) return;
+  state.epSlides.forEach(el => el.classList.remove('active'));
+  state.epSlides[idx].classList.add('active');
+  state.epSlideIdx = idx;
+  // Точки
+  document.querySelectorAll('.ep-nav-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+    d.classList.toggle('done',   i < idx);
+  });
+  document.getElementById('ep-slide-current').textContent = idx + 1;
+  updateEpilogueNavButtons();
+  // Прокрутить наверх плавно
+  document.querySelector('.epilogue-wrap').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function updateEpilogueNavButtons() {
+  const total = state.epSlides ? state.epSlides.length : 0;
+  document.querySelector('.ep-prev').disabled = state.epSlideIdx <= 0;
+  document.querySelector('.ep-next').disabled = state.epSlideIdx >= total - 1;
 }
 
 // ═══ MOBILE TABS ══════════════════════════════════════════════════
@@ -1486,6 +3154,116 @@ async function doResendVerification() {
     alert('Ошибка: ' + e.message);
   }
 }
+
+// ═══ TUTORIAL ═════════════════════════════════════════════════════
+const TUTORIAL_SLIDES = [
+  {
+    target: null,
+    title: 'Добро пожаловать в АГЕНТСТВО',
+    text: 'Ты — частный детектив. Перед тобой закрытое дело, которое агентство решило расследовать заново.\n\nЗадача проста: изучи материалы дела, собери улики и назови виновного.\n\nПокажем где что находится.'
+  },
+  {
+    target: '#docs-panel',
+    title: 'Материалы дела',
+    text: 'Справа — все документы: протоколы допросов, фотографии, финансовые отчёты, архивные справки.\n\nКликни по любому чтобы прочитать. Прогресс-бар наверху показывает сколько изучено.'
+  },
+  {
+    target: '#notebook-panel',
+    title: 'Блокнот расследования',
+    text: 'По центру — столбцы с именами подозреваемых.\n\nВ каждом документе есть фрагменты-улики. Зажми улику и перетащи её в столбец нужного человека. Чем весомее улики — тем сильнее версия.'
+  },
+  {
+    target: '#assistant-panel',
+    title: 'Куратор расследования',
+    text: 'Слева — агент Соколов. Нажимай на кнопки действий чтобы задавать вопросы: проверить алиби, запросить экспертизу, уточнить детали.\n\nПосле каждого прочитанного документа появляются новые вопросы.'
+  },
+  {
+    target: '#notebook-panel',
+    title: 'Обвинение',
+    text: 'Когда прочитаешь все документы и разложишь улики — под именем подозреваемого появится кнопка «Обвинить».\n\nВыбери правильного. Удачи.'
+  }
+];
+
+let tutSlideIdx = 0;
+
+function startTutorial() {
+  tutSlideIdx = 0;
+  renderTutSlide();
+  document.getElementById('tut-overlay').classList.add('show');
+}
+
+function skipTutorial() {
+  _closeTutorial();
+}
+
+function tutorialNext() {
+  if (tutSlideIdx < TUTORIAL_SLIDES.length - 1) {
+    tutSlideIdx++;
+    renderTutSlide();
+  } else {
+    _closeTutorial();
+  }
+}
+
+function _closeTutorial() {
+  document.getElementById('tut-overlay').classList.remove('show');
+  document.getElementById('tut-spotlight').classList.remove('visible');
+  try { localStorage.setItem('agency_tutorial_done', '1'); } catch(e) {}
+  // Если туториал открылся перед вводной карточкой дела — показываем её сейчас
+  if (state._pendingIntroData) {
+    const d = state._pendingIntroData;
+    state._pendingIntroData = null;
+    showIntroCard(d);
+  }
+}
+
+function renderTutSlide() {
+  const slide = TUTORIAL_SLIDES[tutSlideIdx];
+  const total = TUTORIAL_SLIDES.length;
+
+  document.getElementById('tut-step').textContent = `ШАГ ${tutSlideIdx + 1} / ${total}`;
+  document.getElementById('tut-title').textContent = slide.title;
+  document.getElementById('tut-text').textContent = slide.text;
+
+  const nextBtn = document.getElementById('tut-next-btn');
+  nextBtn.textContent = tutSlideIdx === total - 1 ? 'Начать расследование' : 'Далее →';
+
+  const dots = document.getElementById('tut-dots');
+  dots.innerHTML = TUTORIAL_SLIDES.map((_, i) =>
+    `<div class="tut-dot ${i < tutSlideIdx ? 'done' : (i === tutSlideIdx ? 'active' : '')}" onclick="tutJumpTo(${i})"></div>`
+  ).join('');
+
+  positionTutSpotlight(slide.target);
+}
+
+function tutJumpTo(idx) {
+  tutSlideIdx = idx;
+  renderTutSlide();
+}
+
+function positionTutSpotlight(selector) {
+  const sp = document.getElementById('tut-spotlight');
+  if (!selector || window.innerWidth < 768) {
+    sp.classList.remove('visible');
+    return;
+  }
+  const el = document.querySelector(selector);
+  if (!el) { sp.classList.remove('visible'); return; }
+  const r = el.getBoundingClientRect();
+  const pad = 10;
+  sp.style.top    = (r.top    - pad) + 'px';
+  sp.style.left   = (r.left   - pad) + 'px';
+  sp.style.width  = (r.width  + pad * 2) + 'px';
+  sp.style.height = (r.height + pad * 2) + 'px';
+  sp.classList.add('visible');
+}
+
+// Перепозиционировать spotlight при изменении размера окна
+window.addEventListener('resize', () => {
+  if (document.getElementById('tut-overlay').classList.contains('show')) {
+    positionTutSpotlight(TUTORIAL_SLIDES[tutSlideIdx] && TUTORIAL_SLIDES[tutSlideIdx].target);
+  }
+});
 
 // ═══ INIT ═════════════════════════════════════════════════════════
 (async () => {
