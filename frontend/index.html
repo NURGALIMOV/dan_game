@@ -1565,7 +1565,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
     <aside class="assistant-panel" id="assistant-panel">
       <div class="assistant-header">
         <div class="assistant-title">▸ Куратор расследования</div>
-        <div class="assistant-name">Агент Соколов</div>
+        <div class="assistant-name">Клим Колесников</div>
       </div>
       <div class="chat-messages" id="chat-messages">
         <div class="chat-msg system">Папка с материалами передана. Изучай документы, добавляй улики в блокнот.</div>
@@ -1652,7 +1652,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       <div class="intro-curator-photo" id="intro-curator-photo"></div>
       <div class="intro-curator-meta">
         <div class="intro-curator-role">▸ Куратор расследования</div>
-        <div class="intro-curator-name">Агент Соколов</div>
+        <div class="intro-curator-name">Клим Колесников</div>
       </div>
     </div>
     <div class="intro-text" id="intro-text"></div>
@@ -1799,6 +1799,8 @@ let state = {
   requiredDocCount: 0,
   minEvidences: 0,
   paid: false,
+  klimReacted: new Set(),
+  klimInactivityTimer: null,
 };
 
 // ═══ UTILS ════════════════════════════════════════════════════════
@@ -1969,6 +1971,9 @@ async function openCase(caseId, opts) {
   opts = opts || {};
   const isReopen = (state.currentCase === caseId) && opts.preserveBoard;
   state.currentCase = caseId;
+  state.klimReacted = new Set();
+  clearTimeout(state.klimInactivityTimer);
+  state.klimInactivityTimer = null;
   showScreen('game');
   const data = await api('/api/case/start', {case_id: caseId});
   state.caseData         = data;
@@ -2034,25 +2039,26 @@ async function openCase(caseId, opts) {
     const placed = Object.values(state.evidencesByColumn).reduce((s, a) => s + a.length, 0);
     addChatMsg('system', `▸ Продолжаем расследование. Открыто документов: ${(data.unlocked_docs || []).length} / ${data.required_doc_count}. Улик в блокноте: ${placed}.`);
   }
+
+  if (!isReopen) resetKlimTimer();
 }
 
 // ═══ INTRO CARD ════════════════════════════════════════════════════
 function showIntroCard(data) {
-  state._pendingIntroText = `Папка с материалами передана. <b>Жертва:</b> ${data.case.victim}. <b>Место:</b> ${data.case.location}. <b>Официальная версия:</b> ${data.case.official_version}. Агентство считает иначе.\n\nИзучи документы, выдели важное и разложи фрагменты по подозреваемым.`;
+  state._pendingIntroText = `Дело закрыто. Официально — несчастный случай. Ты и я думаем иначе — иначе не занимались бы этим.\n\n<b>Жертва:</b> ${data.case.victim}. <b>Место:</b> ${data.case.location}. <b>Официальная версия:</b> «${data.case.official_version}».\n\nМатериалы у тебя. Читай внимательно, двигай улики в блокнот по подозреваемым. Я рядом.`;
   document.getElementById('intro-text').innerHTML = state._pendingIntroText.replace(/\n/g, '<br/>');
 
-  // Фото куратора — пока стилизованный кружок "С" (можно заменить на реальный портрет)
-  document.getElementById('intro-curator-photo').innerHTML = 'С';
+  document.getElementById('intro-curator-photo').innerHTML = 'КК';
 
   document.getElementById('intro-overlay').classList.add('show');
 }
 
 function closeIntroAndScroll(target) {
   document.getElementById('intro-overlay').classList.remove('show');
-  // Добавим вводный текст в чат помощника — игрок может перечитать
   const plainText = (state._pendingIntroText || '').replace(/<[^>]+>/g, '');
   if (plainText) addChatMsg('system', plainText);
   state._pendingIntroText = null;
+  klimSay('Папка твоя. Читай не спеша — каждая деталь может оказаться ключевой. Если вопросы — кнопки слева.', 700);
 
   // Прокрутка/фокус на нужный блок (на десктопе ничего не делаем,
   // на мобиле — переключаем таб)
@@ -2104,6 +2110,8 @@ function updateProgress() {
 
   // Кнопки обвинения зависят от прогресса и наполнения столбцов
   updateAllAccuseButtons();
+
+  checkKlimAllDocsOpened();
 }
 
 /**
@@ -2605,6 +2613,9 @@ async function openDocOverlay(docId) {
 
   // показать overlay
   document.getElementById('doc-overlay').classList.add('show');
+
+  tryKlimDocReact(docId);
+  resetKlimTimer();
 }
 
 function closeDocOverlay() {
@@ -2696,6 +2707,14 @@ function moveEvidenceToColumn(evId, suspect) {
   if (state.openDocId) renderEvidencesInOverlay(state.openDocId);
   updateAllAccuseButtons();
   saveBoard(state.currentCase);
+
+  if (state.klimReacted && !state.klimReacted.has('first_evidence_placed')) {
+    state.klimReacted.add('first_evidence_placed');
+    klimSay('Первая улика в блокноте. Хорошее начало.', 900);
+  } else {
+    checkKlimSkeptic(suspect);
+  }
+  resetKlimTimer();
 }
 
 function removeEvidenceFromColumn(evId) {
@@ -3155,6 +3174,98 @@ async function doResendVerification() {
   }
 }
 
+// ═══ КЛИМ КОЛЕСНИКОВ — система реакций ═══════════════════════════
+
+const KLIM_DOC_REACTIONS = {
+  'doc_protocol':             'Три болта откручены голыми руками и аккуратно положены рядом. Это не авария — это работа, партнёр.',
+  'doc_semenov':              'Семёнов. Докладная от жертвы, непонятный платёж наличкой. Красиво. Почти слишком красиво.',
+  'doc_fayzullin':            'Файзуллин. Конверт в шкафчике, камера сломалась именно той ночью. Классика. Но с выводами не торопись.',
+  'doc_zvonki':               'Звонок с номера мёртвого человека в 21:30. Кто-то знал личный номер Краснова и умел убеждать. Это уже не случайность.',
+  'doc_foto_stol':            "На столе конверт. Видны буквы «Во...». Запомни их, партнёр.",
+  'doc_diary_krasnov':        'Личный ежедневник. Люди врут вслух — но в дневник пишут правду. Читай внимательно.',
+  'doc_pismo':                'Стоп. Стоп-стоп-стоп. Краснов хранил это письмо восемнадцать лет. Ты понимаешь что это — хранить письмо человека которого ты предал? Это не вина. Это что-то похуже.',
+  'doc_kamera':               '34 минуты. Между табелем и камерой — тридцать четыре минуты. Цех в трёх минутах ходьбы. Считай сам.',
+  'doc_patent':               'Патент оформлен без ведома изобретателя. Автор подал заявление — Краснов лично отказал. Через месяц автор умер. Сорок один год. Хорошая жизнь.',
+  'doc_volkova':              "«Справедливым. [Пауза четыре секунды.] Справедливым.» Она повторила слово дважды. Люди не повторяют слова просто так.",
+  'doc_dossier_volkova_full': 'Восемнадцать лет рядом с ним. Восемнадцать. Знаешь... я знаю людей которые ждали справедливости годами. Не всем везёт дождаться.',
+  'doc_audio_call':           'Голос на записи. Слушай интонацию — слова врут, голос реже.',
+  'doc_volkova_diary':        'Личный дневник. Это уже совсем личное. Читай и помни — ты лезешь в чужую жизнь.',
+};
+
+const KLIM_SUSPECT_REACTIONS = {
+  'Игорь Семёнов': {
+    2: 'Семёнов, значит. Я пока помолчу. Перечитай материалы ещё раз если не лень.',
+    4: 'Всё больше на Семёнова. Слушай, тебя не смущает что всё слишком удобно складывается? Докладная, платёж... Кому выгодно чтобы мы смотрели именно на него?',
+  },
+  'Рустам Файзуллин': {
+    2: '150 тысяч за «смотри в другую сторону» — это трусость, партнёр. Не убийство. Принципиально разные вещи.',
+  },
+  'Алина Краснова': {
+    2: 'Краснова умная. Может слишком умная для такого топорного убийства. Финдиректор ночью на мостике голыми руками — ты серьёзно?',
+  },
+  'Марина Волкова': {
+    3: 'О. Смотришь туда куда нужно. Ничего не скажу — просто продолжай.',
+    5: 'Так. Версия складывается. Восемнадцать лет — это не гнев. Это решение. Продолжай, партнёр.',
+  },
+};
+
+const KLIM_NUDGES = [
+  'Эй. Я понимаю — дело непростое. Но у нас тут труп, на всякий случай.',
+  'Завис? Бывает. Вернись к документам — там ещё не всё очевидно.',
+  'Долго думаешь. Это хорошо. Но думать можно и с открытым документом.',
+  'Партнёр, ты там живой? Открывай материалы.',
+];
+
+function klimSay(text, delay) {
+  setTimeout(() => addChatMsg('assistant', text), delay === undefined ? 1200 : delay);
+}
+
+function tryKlimDocReact(docId) {
+  if (!state.klimReacted || state.klimReacted.has('doc_' + docId)) return;
+  const text = KLIM_DOC_REACTIONS[docId];
+  if (!text) return;
+  state.klimReacted.add('doc_' + docId);
+  klimSay(text);
+}
+
+function checkKlimSkeptic(suspect) {
+  const reactions = KLIM_SUSPECT_REACTIONS[suspect];
+  if (!reactions || !state.klimReacted) return;
+  const count = (state.evidencesByColumn[suspect] || []).length;
+  const thresholds = Object.keys(reactions).map(Number).sort((a, b) => a - b);
+  for (const t of thresholds) {
+    const key = `suspect_${suspect}_${t}`;
+    if (count >= t && !state.klimReacted.has(key)) {
+      state.klimReacted.add(key);
+      klimSay(reactions[t]);
+      break;
+    }
+  }
+}
+
+function checkKlimAllDocsOpened() {
+  if (!state.klimReacted || state.klimReacted.has('all_docs_opened')) return;
+  const total = state.requiredDocCount || 0;
+  const opened = (state.unlockedDocs || []).length;
+  if (total > 0 && opened >= total) {
+    state.klimReacted.add('all_docs_opened');
+    klimSay('Всё прочитал. Теперь у тебя в голове примерно столько же сколько у меня. Почти. Ну — думай, партнёр.');
+  }
+}
+
+function resetKlimTimer() {
+  clearTimeout(state.klimInactivityTimer);
+  state.klimInactivityTimer = setTimeout(() => {
+    const tutOpen    = document.getElementById('tut-overlay')?.classList.contains('show');
+    const resultOpen = document.getElementById('result-overlay')?.classList.contains('show');
+    const gameActive = document.getElementById('screen-game')?.classList.contains('active');
+    if (tutOpen || resultOpen || !gameActive) return;
+    const msg = KLIM_NUDGES[Math.floor(Math.random() * KLIM_NUDGES.length)];
+    klimSay(msg, 0);
+    resetKlimTimer();
+  }, 3 * 60 * 1000);
+}
+
 // ═══ TUTORIAL ═════════════════════════════════════════════════════
 const TUTORIAL_SLIDES = [
   {
@@ -3175,7 +3286,7 @@ const TUTORIAL_SLIDES = [
   {
     target: '#assistant-panel',
     title: 'Куратор расследования',
-    text: 'Слева — агент Соколов. Нажимай на кнопки действий чтобы задавать вопросы: проверить алиби, запросить экспертизу, уточнить детали.\n\nПосле каждого прочитанного документа появляются новые вопросы.'
+    text: 'Слева — Клим Колесников, куратор расследования. Нажимай на кнопки действий чтобы задавать вопросы: проверить алиби, запросить экспертизу, уточнить детали.\n\nПосле каждого прочитанного документа появляются новые вопросы.'
   },
   {
     target: '#notebook-panel',
