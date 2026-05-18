@@ -222,7 +222,19 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
   background: linear-gradient(135deg, rgba(139,44,44,0.08), var(--paper-light));
   box-shadow: 0 0 0 1px rgba(139,44,44,0.2) inset, 2px 2px 4px rgba(0,0,0,0.2);
 }
-.achievement.locked { filter: sepia(0.5) grayscale(0.7); opacity: .4; }
+.achievement.locked {
+  background: rgba(0,0,0,0.10);
+  border: 1.5px dashed rgba(139,120,80,0.3);
+  opacity: 0.8;
+}
+.achievement-locked-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.achievement-locked-wrap svg { opacity: 0.28; }
+.achievement-locked-q {
+  font-family: var(--display); font-size: 14px;
+  color: var(--paper-ink2); opacity: 0.35; line-height: 1;
+}
 .achievement-tip {
   position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
   background: var(--paper); border: 1.5px solid var(--paper-ink); padding: 8px 12px;
@@ -338,6 +350,81 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 }
 .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--paper-red); }
 .status-dot.paid { background: #3d8b5e; }
+
+.case-card-meta {
+  display: flex; gap: 16px; margin-bottom: 14px;
+  font-family: var(--mono); font-size: 9px; color: var(--paper-ink2);
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.case-card-meta-item { display: flex; align-items: center; gap: 5px; }
+.case-card-cta {
+  display: block; width: 100%; margin-top: 14px;
+  background: var(--paper-ink); color: var(--paper-light);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+  padding: 10px 14px; border: none; cursor: pointer;
+  text-transform: uppercase; text-align: center; font-weight: bold;
+  transition: background .15s;
+}
+.case-card-cta:hover { background: var(--paper-red); }
+
+/* Карточка «скоро» — заблюренная папка на столе */
+.case-card-locked {
+  position: relative; padding: 22px 22px 18px;
+  background-color: var(--paper-dark);
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.10  0 0 0 0.22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    linear-gradient(180deg, #c8b98a 0%, var(--paper-dark) 100%);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3);
+  border: 1px solid rgba(139,120,80,0.4);
+  transform: rotate(0.9deg);
+  cursor: default; user-select: none; overflow: hidden;
+  opacity: 0.72; filter: grayscale(30%);
+}
+.case-card-locked::before {
+  content: ''; position: absolute; top: -6px; right: 24px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #b22222, #7a0000);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5); z-index: 3;
+}
+.case-card-locked-veil {
+  position: absolute; inset: 0; z-index: 2;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 6px,
+    rgba(0,0,0,0.04) 6px,
+    rgba(0,0,0,0.04) 12px
+  );
+}
+.case-card-locked-stamp {
+  position: absolute; top: 16px; right: 14px; z-index: 3;
+  font-family: var(--display); font-size: 15px; color: var(--paper-ink2);
+  border: 2.5px solid var(--paper-ink2); padding: 5px 9px;
+  letter-spacing: 3px; transform: rotate(6deg);
+  opacity: 0.55; line-height: 1;
+}
+.case-card-locked-num {
+  font-family: var(--typewriter); font-size: 10px;
+  color: var(--paper-ink2); letter-spacing: 3px; margin-bottom: 12px;
+  font-weight: bold; text-transform: uppercase; position: relative; z-index: 3;
+}
+.case-card-locked-title {
+  font-family: var(--display); font-size: 28px; color: var(--paper-ink2);
+  margin-bottom: 10px; letter-spacing: 2px; line-height: 1.05;
+  position: relative; z-index: 3; filter: blur(3.5px);
+}
+.case-card-locked-sub {
+  font-family: var(--typewriter); font-size: 12.5px; color: var(--paper-ink2);
+  margin-bottom: 22px; line-height: 1.55;
+  position: relative; z-index: 3; filter: blur(2.5px);
+}
+.case-card-locked-footer {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--typewriter); font-size: 10px; color: var(--paper-ink2);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  border: 1.5px solid var(--paper-ink2); padding: 5px 11px;
+  opacity: 0.6; position: relative; z-index: 3;
+}
 
 .btn-logout {
   background: transparent; border: 1px solid var(--paper-ink2);
@@ -1637,7 +1724,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
         </div>
         <button class="btn-resend" id="btn-resend" onclick="doResendVerification()">Отправить письмо ещё раз</button>
       </div>
-      <h2>ОТКРЫТЫЕ ДЕЛА</h2>
+      <h2>АКТИВНЫЕ РАССЛЕДОВАНИЯ</h2>
       <div class="cases-grid" id="cases-grid"></div>
     </div>
   </div>
@@ -2113,17 +2200,63 @@ async function loadCabinet() {
                   : 'ДЕМО ДОСТУПНО';
     const dotClass = c.completed ? 'paid' : (c.paid ? 'paid' : '');
     const numLabel = c.completed ? '▸ ДЕЛО ЗАКРЫТО' : '▸ ДЕЛО ОТКРЫТО';
+    const ctaHtml = (!c.paid && !c.completed)
+      ? `<button class="case-card-cta" onclick="event.stopPropagation();openCase('${c.id}')">Получить полный доступ →</button>`
+      : '';
     return `
       <div class="case-card ${c.completed ? 'completed' : ''}" onclick="openCase('${c.id}')">
         <div class="case-card-num">${numLabel}</div>
         <div class="case-card-title">${c.title}</div>
         <div class="case-card-sub">${c.subtitle}</div>
+        <div class="case-card-meta">
+          <div class="case-card-meta-item">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M5 2.5V5l1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            ~60 мин
+          </div>
+          <div class="case-card-meta-item">
+            <svg width="11" height="10" viewBox="0 0 11 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="4" cy="3" r="2" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M1 9c0-1.657 1.343-3 3-3s3 1.343 3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <circle cx="8.5" cy="3" r="1.5" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M8.5 6c1 0 2 .7 2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            4 подозреваемых
+          </div>
+          <div class="case-card-meta-item">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 7.5L3.5 2 5.5 6 7 4l2 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Сложность: средняя
+          </div>
+        </div>
         <div class="case-card-status">
           <div class="status-dot ${dotClass}"></div>${status}
         </div>
+        ${ctaHtml}
       </div>
     `;
   }).join('');
+
+  // Карточка «Дело №002 — скоро»
+  grid.insertAdjacentHTML('beforeend', `
+    <div class="case-card-locked">
+      <div class="case-card-locked-veil"></div>
+      <div class="case-card-locked-stamp">СКОРО</div>
+      <div class="case-card-locked-num">▸ ДЕЛО ЗАСЕКРЕЧЕНО</div>
+      <div class="case-card-locked-title">Дело №002 — ████████</div>
+      <div class="case-card-locked-sub">██████████ завод. ████. ████████.<br>Материалы засекречены до начала расследования.</div>
+      <div class="case-card-locked-footer">
+        <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="5.5" width="9" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M3 5.5V3.5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        В разработке
+      </div>
+    </div>
+  `);
 }
 
 function renderAchievements(achievements, earnedCount, total) {
@@ -2134,13 +2267,22 @@ function renderAchievements(achievements, earnedCount, total) {
   if (!grid) return;
   grid.innerHTML = achievements.map(a => {
     const cls = a.earned ? 'earned' : 'locked';
-    const status = a.earned ? '✓ ПОЛУЧЕНО' : '🔒 ЗАКРЫТО';
+    const status = a.earned ? '✓ ПОЛУЧЕНО' : 'НЕ ОТКРЫТО';
+    const iconHtml = a.earned
+      ? `<span>${a.icon || '★'}</span>`
+      : `<div class="achievement-locked-wrap">
+           <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <rect x="1" y="8" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+             <path d="M4 8V5.5a4 4 0 0 1 8 0V8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+           </svg>
+           <span class="achievement-locked-q">?</span>
+         </div>`;
     return `
       <div class="achievement ${cls}">
-        <span>${a.icon || '★'}</span>
+        ${iconHtml}
         <div class="achievement-tip">
-          <div class="achievement-tip-title">${a.title}</div>
-          <div class="achievement-tip-desc">${a.description}</div>
+          <div class="achievement-tip-title">${a.earned ? a.title : '???'}</div>
+          <div class="achievement-tip-desc">${a.earned ? a.description : 'Это достижение ещё не раскрыто. Продолжай расследование.'}</div>
           <div class="achievement-tip-status">${status}</div>
         </div>
       </div>
