@@ -1256,6 +1256,102 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .result-msg { font-family: var(--serif); font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 28px; }
 .result-rank { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 2px; margin-bottom: 24px; }
 
+/* ─── KLIM WRONG RESULT ─────────────────────────────────────────── */
+.klim-wrong-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(10,8,5,0.88); z-index: 9500;
+  align-items: center; justify-content: center;
+}
+.klim-wrong-overlay.show { display: flex; }
+.klim-wrong-card {
+  position: relative; max-width: 460px; width: calc(100vw - 32px);
+  background: var(--paper); overflow: hidden;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.85), 2px 2px 0 var(--paper-dark);
+  animation: kwSlideIn .32s ease;
+}
+@keyframes kwSlideIn {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.klim-wrong-head {
+  background: var(--paper-dark); border-bottom: 2px solid var(--paper-rust);
+  padding: 8px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.klim-wrong-head-org {
+  font-family: var(--mono); font-size: 8px; color: var(--paper-ink2);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.klim-wrong-head-cls {
+  font-family: var(--typewriter); font-size: 9px; color: var(--paper-rust);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.klim-wrong-body { padding: 20px 22px 22px; }
+.klim-wrong-agent-row {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+}
+.klim-wrong-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--paper-dark); border: 2px solid var(--paper-rust);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 16px; color: var(--paper-ink);
+  letter-spacing: 1px;
+}
+.klim-wrong-agent-name {
+  font-family: var(--display); font-size: 17px; color: var(--paper-ink);
+  letter-spacing: 1px; line-height: 1.1;
+}
+.klim-wrong-agent-title {
+  font-family: var(--mono); font-size: 8px; color: var(--paper-ink2);
+  letter-spacing: 2px; text-transform: uppercase; margin-top: 3px;
+}
+.klim-wrong-stamp-row {
+  display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px;
+}
+.klim-wrong-stamp {
+  font-family: var(--display); font-size: 14px; color: var(--paper-red);
+  border: 3px solid var(--paper-red); padding: 6px 10px;
+  letter-spacing: 2px; transform: rotate(-5deg);
+  display: inline-block; opacity: 0.85; flex-shrink: 0;
+  line-height: 1.2; text-align: center;
+}
+.klim-wrong-quote {
+  font-family: var(--typewriter); font-size: 13px; color: var(--paper-ink);
+  line-height: 1.7; font-style: italic;
+}
+.klim-wrong-suspect-row {
+  background: var(--paper-dark); border: 1px dashed var(--paper-rust);
+  padding: 9px 14px; margin-bottom: 18px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.klim-wrong-suspect-label {
+  font-family: var(--mono); font-size: 8px; color: var(--paper-ink2);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.klim-wrong-suspect-name {
+  font-family: var(--typewriter); font-size: 13px; color: var(--paper-red);
+  font-weight: bold; letter-spacing: 1px; text-decoration: line-through;
+  text-decoration-color: var(--paper-red);
+}
+.klim-wrong-suspect-x {
+  font-family: var(--display); font-size: 18px; color: var(--paper-red); opacity: 0.7;
+}
+.klim-wrong-btns { display: flex; gap: 10px; }
+.klim-wrong-btn-retry {
+  flex: 1; background: var(--paper-ink); color: var(--paper);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+  padding: 11px 14px; border: none; cursor: pointer;
+  text-transform: uppercase; transition: background .15s;
+}
+.klim-wrong-btn-retry:hover { background: var(--paper-rust); }
+.klim-wrong-btn-cabinet {
+  background: transparent; color: var(--paper-ink2);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+  padding: 11px 14px; border: 1px solid var(--paper-rust); cursor: pointer;
+  text-transform: uppercase; transition: color .15s, border-color .15s;
+}
+.klim-wrong-btn-cabinet:hover { color: var(--paper-ink); border-color: var(--paper-ink); }
+
 /* EPILOGUE */
 /* ─── ЭПИЛОГ (стиль папки дела) ─────────────────────────────── */
 #screen-epilogue { background: #0d0f14; overflow-y: auto; }
@@ -1942,6 +2038,40 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       <button class="tut-skip" onclick="skipTutorial()">Пропустить</button>
       <div class="tut-dots" id="tut-dots"></div>
       <button class="tut-next" id="tut-next-btn" onclick="tutorialNext()">Далее →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ KLIM WRONG RESULT ════════════════════════════════════════ -->
+<div class="klim-wrong-overlay" id="klim-wrong-overlay">
+  <div class="klim-wrong-card">
+    <div class="klim-wrong-head">
+      <div class="klim-wrong-head-org">Частное следственное агентство — ██████████</div>
+      <div class="klim-wrong-head-cls">Версия отклонена</div>
+    </div>
+    <div class="klim-wrong-body">
+      <div class="klim-wrong-agent-row">
+        <div class="klim-wrong-avatar">КК</div>
+        <div>
+          <div class="klim-wrong-agent-name">Клим Колесников</div>
+          <div class="klim-wrong-agent-title">Куратор расследования</div>
+        </div>
+      </div>
+      <div class="klim-wrong-stamp-row">
+        <div class="klim-wrong-stamp">ВЕРСИЯ<br>НЕ ТА</div>
+        <div class="klim-wrong-quote" id="klim-wrong-quote"></div>
+      </div>
+      <div class="klim-wrong-suspect-row">
+        <div>
+          <div class="klim-wrong-suspect-label">Обвинение предъявлено</div>
+          <div class="klim-wrong-suspect-name" id="klim-wrong-suspect-name">—</div>
+        </div>
+        <div class="klim-wrong-suspect-x">✗</div>
+      </div>
+      <div class="klim-wrong-btns">
+        <button class="klim-wrong-btn-retry" onclick="closeKlimWrong()">Попробовать снова</button>
+        <button class="klim-wrong-btn-cabinet" onclick="closeKlimWrong(); backToCabinet()">В кабинет</button>
+      </div>
     </div>
   </div>
 </div>
