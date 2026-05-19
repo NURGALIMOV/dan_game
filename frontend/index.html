@@ -3220,8 +3220,9 @@ function accuseFromColumn(suspect) {
     e.points_to && !placed.has(e.id)
   );
   if (unplacedPointing.length > 0) {
+    state.pendingAccuseSuspect = suspect; // запоминаем кого именно обвиняем
     showHintBanner(unplacedPointing);
-    return;  // даём шанс сначала разложить
+    return;
   }
   const ids = (state.evidencesByColumn[suspect] || []).slice();
   return submitAccusation(suspect, ids);
@@ -3249,14 +3250,11 @@ function closeHintBanner() {
 }
 function forceAccuseAnyway() {
   closeHintBanner();
-  // Найдём активный «обвиняемый» столбец — тот, в котором больше всего улик
-  let best = null, bestCount = -1;
-  Object.entries(state.evidencesByColumn || {}).forEach(([s, arr]) => {
-    if (arr.length > bestCount) { bestCount = arr.length; best = s; }
-  });
-  if (!best) return;
-  const ids = state.evidencesByColumn[best].slice();
-  submitAccusation(best, ids);
+  const suspect = state.pendingAccuseSuspect;
+  state.pendingAccuseSuspect = null;
+  if (!suspect) return;
+  const ids = (state.evidencesByColumn[suspect] || []).slice();
+  submitAccusation(suspect, ids);
 }
 
 // ═══ DRAG & DROP (pointer events: мышь + тач + tap vs drag) ═══════════
@@ -3386,19 +3384,18 @@ async function submitAccusation(suspect, selected) {
       selected_evidences: selected
     });
     if (res.result === 'demo_end')                 showPaywall();
-    else if (res.result === 'needs_investigation') showResult('wrong', '⚠', 'НУЖНО РАССЛЕДОВАНИЕ', res.message, null);
-    else if (res.result === 'needs_evidence')      showResult('wrong', '⚠', 'НЕТ ДОКАЗАТЕЛЬСТВ', res.message, null);
+    else if (res.result === 'needs_investigation') showKlimWrong(suspect, res.message);
+    else if (res.result === 'needs_evidence')      showKlimWrong(suspect, res.message);
     else if (res.result === 'wrong_evidence') {
-      showResult('wrong', '⚠', 'ВЕРСИЯ НЕ СКЛАДЫВАЕТСЯ',
-        res.message + ' С такой версией ты любое дело выиграешь — смотри внимательно.', null);
-      if (res.hint) addChatMsg('assistant', res.hint);
+      showKlimWrong(suspect, res.message, 'evidence');
+      if (res.hint) setTimeout(() => addChatMsg('assistant', res.hint), 600);
     }
     else if (res.result === 'correct')             showResult('correct', '✓', 'ВЕРНО', res.message, res.rank);
     else if (res.result === 'wrong') {
-      showResult('wrong', '✗', 'НЕВЕРНО', res.message, null);
-      if (res.hint) addChatMsg('assistant', res.hint);
+      showKlimWrong(suspect, res.message);
+      if (res.hint) setTimeout(() => addChatMsg('assistant', res.hint), 600);
     }
-    else                                           showResult('wrong', '✗', 'НЕВЕРНО', res.message, null);
+    else                                           showKlimWrong(suspect, res.message);
   } catch(e) { addChatMsg('system', 'Ошибка: ' + e.message); }
 }
 
@@ -3489,6 +3486,50 @@ async function doPay() {
     closePaywall();
     showResult('wrong', '⚠', 'ОПЛАТА НЕДОСТУПНА', e.message, null);
   }
+}
+
+// ═══ KLIM WRONG RESULT ════════════════════════════════════════════
+const KLIM_WRONG_REACTIONS = {
+  'Игорь Семёнов': [
+    '«Семёнов. Крепкий выбор — на поверхности. Мотив есть, доступ есть. Вот только его алиби в 21:30 рушит всю конструкцию — трое свидетелей и камера у раздевалки. Он там был, партнёр. Иди глубже.»',
+    '«Я понимаю логику. Он грубый, запуганный, прячет глаза. Но это не убийца — это человек, которого что-то держит. Что именно — вот вопрос.»',
+  ],
+  'Рустам Файзуллин': [
+    '«Охранник, который публично не пустил Краснова в тот вечер. Убийцы, партнёр, так не делают. Они не создают сцены на виду у всех — они создают тишину. Не тот.»',
+    '«Файзуллин боится. Но страх и вина — разные вещи. Он что-то видел или слышал. Это не исполнитель — это свидетель.»',
+  ],
+  'Алина Краснова': [
+    '«Краснова — умная, циничная, с деловым мотивом. Хороший инстинкт, серьёзно. Но деловые люди не ждут восемнадцать лет ради мести. Они решают проблемы иначе. Это личное, партнёр. Очень личное.»',
+    '«Слушай, она та ещё штучка — согласен. Но посмотри на почерк: тут нет корысти. Тут боль. А у Красновой боли нет — у неё есть только деньги и счёт.»',
+  ],
+};
+const KLIM_WRONG_DEFAULT = [
+  '«Нет. Это не тот человек. Кто был рядом с Красновым каждый день, годами? Кто имел доступ в любое время и ни у кого не вызывал вопросов? Ответь на это — и имя само всплывёт.»',
+  '«Партнёр, я не сомневаюсь в твоей логике. Но она ведёт не туда. Вернись к материалам — там есть кое-что, что ты, кажется, пропустил.»',
+];
+
+// Отдельные реакции когда улики противоречат обвинению (wrong_evidence)
+const KLIM_WRONG_EVIDENCE_REACTIONS = {
+  'Игорь Семёнов': '«Стоп. Среди улик что ты кинул на Семёнова — есть фрагменты, которые ведут в другую сторону. Это не ошибка следствия, это ошибка в логике. Разложи заново.»',
+  'Рустам Файзуллин': '«Улики противоречат друг другу — часть из них вообще не про Файзуллина. Либо ты нашёл что-то новое и не понял что именно, либо запутался. Перепроверь блокнот.»',
+  'Алина Краснова': '«Картина не складывается, партнёр. В твоей версии с Красновой — дыры. Один из фрагментов в блокноте не её. Кому он принадлежит на самом деле?»',
+};
+const KLIM_WRONG_EVIDENCE_DEFAULT = '«Подожди. Среди выбранных тобой улик — есть противоречие. Кто-то из фигурантов оставил след, но ты приписал его не тому. Вернись к блокноту и посмотри внимательно.»';
+
+function showKlimWrong(suspect, _msg, type) {
+  let quote;
+  if (type === 'evidence') {
+    quote = KLIM_WRONG_EVIDENCE_REACTIONS[suspect] || KLIM_WRONG_EVIDENCE_DEFAULT;
+  } else {
+    const pool = KLIM_WRONG_REACTIONS[suspect] || KLIM_WRONG_DEFAULT;
+    quote = pool[Math.floor(Math.random() * pool.length)];
+  }
+  document.getElementById('klim-wrong-quote').textContent = quote;
+  document.getElementById('klim-wrong-suspect-name').textContent = suspect;
+  document.getElementById('klim-wrong-overlay').classList.add('show');
+}
+function closeKlimWrong() {
+  document.getElementById('klim-wrong-overlay').classList.remove('show');
 }
 
 // ═══ RESULT ═══════════════════════════════════════════════════════
